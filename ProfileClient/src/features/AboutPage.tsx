@@ -1,163 +1,237 @@
 // src/components/AboutPage.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { useAbout } from '../lib/hooks/useAbout';
-import { Button, CircularProgress, TextField, Typography } from '@mui/material';
-import Grid2 from '@mui/material/Grid';
+import {
+  Box,
+  Container,
+  Typography,
+  CircularProgress,
+  Paper,
+  IconButton,
+  Divider,
+  Stack,
+  useTheme,
+  useMediaQuery,
+  Grid
+} from '@mui/material';
+import {
+  Email as EmailIcon,
+  GitHub as GitHubIcon,
+  LinkedIn as LinkedInIcon,
+} from '@mui/icons-material';
 
 export const AboutPage: React.FC = () => {
-  const { about, isLoading, isError, updateAbout } = useAbout();
-  const [editMode, setEditMode] = useState(false);
-  const [formState, setFormState] = useState(about);
+  const { about, isLoading, isError } = useAbout();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  // sync form when about loads
-  React.useEffect(() => {
-    if (about) setFormState(about);
-  }, [about]);
+  if (isLoading) {
+    return (
+      <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+        <CircularProgress size={60} />
+      </Container>
+    );
+  }
 
-  if (isLoading) return <CircularProgress />;
-  if (isError || !about) return <Typography color="error">Error loading About Me</Typography>;
+  if (isError || !about) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            p: 4, 
+            textAlign: 'center',
+            bgcolor: 'error.light',
+            color: 'error.contrastText'
+          }}
+        >
+          <Typography variant="h6">Error loading About Me information</Typography>
+        </Paper>
+      </Container>
+    );
+  }
 
-  const handleChange = (
-    field: keyof Omit<typeof about, 'id' | 'fullName' | 'bio' | 'location'>,
-    value: string
-  ) => {
-    setFormState(s => ({ ...s!, [field]: value }));
+  const handleSocialClick = (url: string) => {
+    if (url) {
+      window.open(url.startsWith('http') ? url : `https://${url}`, '_blank');
+    }
   };
 
-  const handleLocalizedChange = (
-    section: 'fullName' | 'bio' | 'location',
-    lang: 'en' | 'he',
-    value: string
-  ) => {
-    setFormState(s => ({
-      ...s!,
-      [section]: { ...s![section], [lang]: value },
-    }));
-  };
-
-  const handleSave = () => {
-    updateAbout.mutate(formState!);
-    setEditMode(false);
+  const handleEmailClick = () => {
+    if (about.email) {
+      window.location.href = `mailto:${about.email}`;
+    }
   };
 
   return (
-    <Grid2 container spacing={2} padding={4}>
-  <Grid2 size={12}>
-    <Typography variant="h4">About Me</Typography>
-  </Grid2>
+    <Container maxWidth={false} sx={{ py: 4, width: "100%", mx: "auto", zIndex: 1 }}>
+      <Grid container spacing={4}>
+        {/* Bio Section */}
+        <Grid size={12}>
+          <Paper  elevation={4} sx={{borderRadius: 3 }}>
+            <Box sx={{ p: { xs: 3, md: 4 } }}>
+              <Typography 
+                variant="h4" 
+                component="h2" 
+                gutterBottom
+                sx={{ 
+                  fontWeight: 600,
+                  color: 'primary.main',
+                  mb: 3
+                }}
+              >
+                About Me
+              </Typography>
+              
+              {about.bio.en && (
+                <Box sx={{ mb: about.bio.he ? 4 : 0 }}>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      fontSize: '1.1rem',
+                      lineHeight: 1.8,
+                      color: 'text.primary'
+                    }}
+                  >
+                    {about.bio.en}
+                  </Typography>
+                </Box>
+              )}
 
-  <Grid2 size={12} >
-    <Typography variant="h6">Full Name (EN)</Typography>
-    {editMode ? (
-      <TextField
-        fullWidth
-        value={formState!.fullName.en}
-        onChange={e => handleLocalizedChange('fullName', 'en', e.target.value)}
-      />
-    ) : (
-      <Typography>{about.fullName.en}</Typography>
-    )}
-  </Grid2>
+              {about.bio.he && (
+                <>
+                  {about.bio.en && <Divider sx={{ my: 3 }} />}
+                  <Box sx={{ direction: 'rtl' }}>
+                    <Typography 
+                      variant="body1" 
+                      paragraph
+                      sx={{ 
+                        fontSize: '1.1rem',
+                        lineHeight: 1.8,
+                        color: 'text.primary'
+                      }}
+                    >
+                      {about.bio.he}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+            </Box>
+          </Paper>
+        </Grid>
 
-  <Grid2 size={12}>
-    <Typography variant="h6">Full Name (HE)</Typography>
-    {editMode ? (
-      <TextField
-        fullWidth
-        value={formState!.fullName.he}
-        onChange={e => handleLocalizedChange('fullName', 'he', e.target.value)}
-      />
-    ) : (
-      <Typography>{about.fullName.he}</Typography>
-    )}
-  </Grid2>
+        {/* Contact & Social Links */}
+        <Grid size={12}>
+          <Paper elevation={4} sx={{ borderRadius: 3 }}>
+            <Box sx={{ p: { xs: 3, md: 4 } }}>
+              <Typography 
+                variant="h5" 
+                component="h3" 
+                gutterBottom
+                sx={{ 
+                  fontWeight: 600,
+                  color: 'primary.main',
+                  mb: 3
+                }}
+              >
+                Let's Connect
+              </Typography>
 
-  <Grid2 size={12}>
-    <Typography variant="h6">Bio (EN)</Typography>
-    {editMode ? (
-      <TextField
-        fullWidth
-        multiline
-        minRows={3}
-        value={formState!.bio.en}
-        onChange={e => handleLocalizedChange('bio', 'en', e.target.value)}
-      />
-    ) : (
-      <Typography paragraph>{about.bio.en}</Typography>
-    )}
-  </Grid2>
+              <Stack 
+                direction={isMobile ? 'column' : 'row'} 
+                spacing={3}
+                alignItems={isMobile ? 'stretch' : 'center'}
+                flexWrap="wrap"
+                useFlexGap
+              >
+                {about.email && (
+                  <Paper 
+                    elevation={2}
+                    sx={{ 
+                      borderRadius: 3,
+                      p: 2, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        elevation: 4,
+                        transform: 'translateY(-2px)',
+                        bgcolor: 'action.hover'
+                      }
+                    }}
+                    onClick={handleEmailClick}
+                  >
+                    <IconButton color="primary" size="small">
+                      <EmailIcon />
+                    </IconButton>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      {about.email}
+                    </Typography>
+                  </Paper>
+                )}
 
-  <Grid2 size={12}>
-    <Typography variant="h6">Bio (HE)</Typography>
-    {editMode ? (
-      <TextField
-        fullWidth
-        multiline
-        minRows={3}
-        value={formState!.bio.he}
-        onChange={e => handleLocalizedChange('bio', 'he', e.target.value)}
-      />
-    ) : (
-      <Typography paragraph>{about.bio.he}</Typography>
-    )}
-  </Grid2>
+                {about.gitHub && (
+                  <Paper 
+                    elevation={2}
+                    sx={{ 
+                      borderRadius: 3,
+                      p: 2, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        elevation: 4,
+                        transform: 'translateY(-2px)',
+                        bgcolor: 'action.hover'
+                      }
+                    }}
+                    onClick={() => handleSocialClick(about.gitHub)}
+                  >
+                    <IconButton color="primary" size="small">
+                      <GitHubIcon />
+                    </IconButton>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      GitHub
+                    </Typography>
+                  </Paper>
+                )}
 
-  <Grid2 size={12}>
-    <Typography variant="subtitle1">Email</Typography>
-    {editMode ? (
-      <TextField
-        fullWidth
-        value={formState!.email}
-        onChange={e => handleChange('email', e.target.value)}
-      />
-    ) : (
-      <Typography>{about.email}</Typography>
-    )}
-  </Grid2>
-
-  <Grid2 size={12}>
-    <Typography variant="subtitle1">GitHub</Typography>
-    {editMode ? (
-      <TextField
-        fullWidth
-        value={formState!.gitHub}
-        onChange={e => handleChange('gitHub', e.target.value)}
-      />
-    ) : (
-      <Typography>{about.gitHub}</Typography>
-    )}
-  </Grid2>
-
-  <Grid2 size={12}>
-    <Typography variant="subtitle1">LinkedIn</Typography>
-    {editMode ? (
-      <TextField
-        fullWidth
-        value={formState!.linkedIn}
-        onChange={e => handleChange('linkedIn', e.target.value)}
-      />
-    ) : (
-      <Typography>{about.linkedIn}</Typography>
-    )}
-  </Grid2>
-
-  <Grid2 size={12} display="flex" justifyContent="flex-end" gap={1}>
-    {editMode ? (
-      <>
-        <Button variant="contained" onClick={handleSave} disabled={isLoading}>
-          {isLoading ? 'Saving…' : 'Save'}
-        </Button>
-        <Button variant="outlined" onClick={() => setEditMode(false)}>
-          Cancel
-        </Button>
-      </>
-    ) : (
-      <Button variant="contained" onClick={() => setEditMode(true)}>
-        Edit
-      </Button>
-    )}
-  </Grid2>
-</Grid2>
-
+                {about.linkedIn && (
+                  <Paper 
+                    elevation={2}
+                    sx={{ 
+                      borderRadius: 3,
+                      p: 2, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        elevation: 4,
+                        transform: 'translateY(-2px)',
+                        bgcolor: 'action.hover'
+                      }
+                    }}
+                    onClick={() => handleSocialClick(about.linkedIn)}
+                  >
+                    <IconButton color="primary" size="small">
+                      <LinkedInIcon />
+                    </IconButton>
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      LinkedIn
+                    </Typography>
+                  </Paper>
+                )}
+              </Stack>
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
