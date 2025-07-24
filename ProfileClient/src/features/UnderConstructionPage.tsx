@@ -2,7 +2,6 @@
 import React from 'react';
 import {
   Box,
-  Container,
   Typography,
   Paper,
   useTheme,
@@ -26,147 +25,143 @@ export const UnderConstructionPage: React.FC = () => {
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4, mt: 12 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <Paper 
-          elevation={8}
+      <Paper
+        sx={{
+          boxSizing: 'border-box',
+          borderRadius: 4,
+          boxShadow: 3,
+          overflow: 'hidden',
+          p: 0, m: 0, width: '100%'
+        }}
+      >
+        {/* Header */}
+        <Box
           sx={{
-            borderRadius: 4,
-            overflow: 'hidden',
-            maxWidth: 600,
+            background: 'linear-gradient(to right, #e3f2fd, #ffffff)',
+            p: { xs: 4, md: 6 },
+            textAlign: 'center',
           }}
         >
-          {/* Header */}
-          <Box 
+          <Box
             sx={{
-              background: 'linear-gradient(to right, #e3f2fd, #ffffff)',
-              p: { xs: 4, md: 6 },
-              textAlign: 'center',
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              bgcolor: 'warning.main',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              mx: 'auto',
+              mb: 3,
+              animation: 'pulse 2s infinite',
+              '@keyframes pulse': {
+                '0%': {
+                  transform: 'scale(1)',
+                },
+                '50%': {
+                  transform: 'scale(1.05)',
+                },
+                '100%': {
+                  transform: 'scale(1)',
+                },
+              },
             }}
           >
-            <Box
-              sx={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                bgcolor: 'warning.main',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                mx: 'auto',
-                mb: 3,
-                animation: 'pulse 2s infinite',
-                '@keyframes pulse': {
-                  '0%': {
-                    transform: 'scale(1)',
-                  },
-                  '50%': {
-                    transform: 'scale(1.05)',
-                  },
-                  '100%': {
-                    transform: 'scale(1)',
-                  },
-                },
-              }}
-            >
-              <ConstructionIcon sx={{ fontSize: 40 }} />
-            </Box>
+            <ConstructionIcon sx={{ fontSize: 40 }} />
+          </Box>
 
-            <Typography 
-              variant="h4" 
-              component="h1" 
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Under Construction
+          </Typography>
+
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ mb: 2 }}
+          >
+            This section is currently being built
+          </Typography>
+        </Box>
+
+        {/* Body */}
+        <Box sx={{ p: { xs: 4, md: 6 } }}>
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: '1.1rem',
+              lineHeight: 1.7,
+              color: 'text.primary',
+              textAlign: 'center',
+              mb: 4
+            }}
+          >
+            I'm working hard to bring you an amazing experience. This page will showcase
+            exciting features and content very soon!
+          </Typography>
+
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Typography
+              variant="h6"
               gutterBottom
-              sx={{ 
-                fontWeight: 700,
-                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+              sx={{
+                fontWeight: 600,
+                color: 'primary.main',
               }}
             >
-              Under Construction
+              What to expect:
             </Typography>
-            
-            <Typography 
-              variant="h6" 
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={2}
+              justifyContent="center"
+              alignItems="center"
+              sx={{ mt: 2 }}
+            >
+              {features.map((feature, index) => (
+                <Chip
+                  key={index}
+                  icon={feature.icon}
+                  label={feature.label}
+                  variant="outlined"
+                  color={feature.color}
+                  sx={{
+                    borderRadius: 3,
+                    fontWeight: 500,
+                    height: 40,
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: theme.shadows[4],
+                    },
+                    transition: 'all 0.2s ease',
+                  }}
+                />
+              ))}
+            </Stack>
+          </Box>
+
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography
+              variant="body2"
               color="text.secondary"
-              sx={{ mb: 2 }}
+              sx={{ fontStyle: 'italic' }}
             >
-              This section is currently being built
+              Check back soon for updates! 🚀
             </Typography>
           </Box>
-
-          {/* Body */}
-          <Box sx={{ p: { xs: 4, md: 6 } }}>
-            <Typography 
-              variant="body1"
-              paragraph
-              sx={{ 
-                fontSize: '1.1rem',
-                lineHeight: 1.7,
-                color: 'text.primary',
-                textAlign: 'center',
-                mb: 4
-              }}
-            >
-              I'm working hard to bring you an amazing experience. This page will showcase 
-              exciting features and content very soon!
-            </Typography>
-
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Typography 
-                variant="h6" 
-                gutterBottom
-                sx={{ 
-                  fontWeight: 600,
-                  color: 'primary.main',
-                }}
-              >
-                What to expect:
-              </Typography>
-
-              <Stack 
-                direction={{ xs: 'column', sm: 'row' }} 
-                spacing={2}
-                justifyContent="center"
-                alignItems="center"
-                sx={{ mt: 2 }}
-              >
-                {features.map((feature, index) => (
-                  <Chip
-                    key={index}
-                    icon={feature.icon}
-                    label={feature.label}
-                    variant="outlined"
-                    color={feature.color}
-                    sx={{
-                      borderRadius: 3,
-                      fontWeight: 500,
-                      height: 40,
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: theme.shadows[4],
-                      },
-                      transition: 'all 0.2s ease',
-                    }}
-                  />
-                ))}
-              </Stack>
-            </Box>
-
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography 
-                variant="body2" 
-                color="text.secondary"
-                sx={{ fontStyle: 'italic' }}
-              >
-                Check back soon for updates! 🚀
-              </Typography>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+        </Box>
+      </Paper>
   );
 };

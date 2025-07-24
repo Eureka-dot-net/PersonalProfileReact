@@ -75,7 +75,6 @@ export const ExperiencePage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ width: '100%', py: 4, mt: 12 }}>
       <Grid container spacing={4}>
 
         {/* Experience Cards */}
@@ -231,6 +230,5 @@ export const ExperiencePage: React.FC = () => {
           </Grid>
         )}
       </Grid>
-    </Container>
   );
 };

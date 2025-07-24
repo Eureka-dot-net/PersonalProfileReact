@@ -64,7 +64,6 @@ export const AboutPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth={false} sx={{ py: 4, width: "100%", mx: "auto", zIndex: 1 }}>
       <Grid container spacing={4}>
         {/* Bio Section */}
         <Grid size={12}>
@@ -231,6 +230,5 @@ export const AboutPage: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
-    </Container>
   );
 };

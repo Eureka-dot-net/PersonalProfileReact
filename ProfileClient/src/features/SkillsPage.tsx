@@ -58,7 +58,6 @@ export const SkillsPage: React.FC = () => {
 
   if (isError || !skills) {
     return (
-      <Container maxWidth="lg" sx={{ py: 8, mt: 12 }}>
         <Paper 
           elevation={3} 
           sx={{ 
@@ -70,12 +69,10 @@ export const SkillsPage: React.FC = () => {
         >
           <Typography variant="h6">Error loading Skills information</Typography>
         </Paper>
-      </Container>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4, mt: 12 }}>
       <Grid container spacing={4}>
         {/* Skills Categories */}
         {skills.map((skillCategory) => (
@@ -166,6 +163,5 @@ export const SkillsPage: React.FC = () => {
           </Grid>
         )}
       </Grid>
-    </Container>
   );
 };

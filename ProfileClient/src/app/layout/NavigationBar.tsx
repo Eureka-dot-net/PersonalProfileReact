@@ -10,6 +10,7 @@ import {
   Stack,
   Button,
   AppBar,
+  Toolbar,
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -41,21 +42,29 @@ export const NavigationBar: React.FC = () => {
   ];
 
   return (
-    <AppBar 
-        position="fixed" 
-        elevation={4}
-        sx={{
-          background: 'linear-gradient(to right, #e3f2fd, #ffffff)',
-          borderRadius: 3,
-           top: 0,
-           zIndex: 1100,
-           width: "92.5%",
-           left: '50%',
-           transform: 'translateX(-50%)'
-        }}
-    >
-      <Container maxWidth="lg">
-        <Box sx={{ p: { xs: 2, md: 3 } }}>
+    <Box
+  sx={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1100,
+    display: "flex",
+    justifyContent: "center",
+    pointerEvents: "none", // AppBar will handle interactions
+  }}
+>
+  <AppBar
+    position="static" // Use static since Box is handling positioning
+    sx={{
+      width: "95%",
+      pointerEvents: "auto",
+      background: 'linear-gradient(to right, #e3f2fd, #ffffff)',
+      borderRadius: 3,
+      boxShadow: 3,
+    }}
+  >
+    <Toolbar sx={{ p: { xs: 2, md: 3 } }}>
           <Box sx={{ 
             display: 'flex', 
             alignItems: 'center', 
@@ -146,8 +155,8 @@ export const NavigationBar: React.FC = () => {
               ))}
             </Stack>
           </Box>
-        </Box>
-      </Container>
+        </Toolbar>
     </AppBar>
+    </Box>
   );
 };
