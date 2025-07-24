@@ -36,10 +36,10 @@ export const AboutPage: React.FC = () => {
   if (isError || !about) {
     return (
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Paper 
-          elevation={3} 
-          sx={{ 
-            p: 4, 
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
             textAlign: 'center',
             bgcolor: 'error.light',
             color: 'error.contrastText'
@@ -68,13 +68,13 @@ export const AboutPage: React.FC = () => {
       <Grid container spacing={4}>
         {/* Bio Section */}
         <Grid size={12}>
-          <Paper  elevation={4} sx={{borderRadius: 3 }}>
+          <Paper elevation={4} sx={{ borderRadius: 3 }}>
             <Box sx={{ p: { xs: 3, md: 4 } }}>
-              <Typography 
-                variant="h4" 
-                component="h2" 
+              <Typography
+                variant="h4"
+                component="h2"
                 gutterBottom
-                sx={{ 
+                sx={{
                   fontWeight: 600,
                   color: 'primary.main',
                   mb: 3
@@ -82,19 +82,18 @@ export const AboutPage: React.FC = () => {
               >
                 About Me
               </Typography>
-              
+
               {about.bio.en && (
                 <Box sx={{ mb: about.bio.he ? 4 : 0 }}>
-                  <Typography 
-                    variant="body1" 
-                    sx={{ 
+                  <Typography
+                    variant="body1"
+                    sx={{
                       fontSize: '1.1rem',
                       lineHeight: 1.8,
-                      color: 'text.primary'
+                      color: 'text.primary',
                     }}
-                  >
-                    {about.bio.en}
-                  </Typography>
+                    dangerouslySetInnerHTML={{ __html: about.bio.en.replace(/\r?\n/g, "<br />") }}
+                  />
                 </Box>
               )}
 
@@ -102,10 +101,10 @@ export const AboutPage: React.FC = () => {
                 <>
                   {about.bio.en && <Divider sx={{ my: 3 }} />}
                   <Box sx={{ direction: 'rtl' }}>
-                    <Typography 
-                      variant="body1" 
+                    <Typography
+                      variant="body1"
                       paragraph
-                      sx={{ 
+                      sx={{
                         fontSize: '1.1rem',
                         lineHeight: 1.8,
                         color: 'text.primary'
@@ -124,11 +123,11 @@ export const AboutPage: React.FC = () => {
         <Grid size={12}>
           <Paper elevation={4} sx={{ borderRadius: 3 }}>
             <Box sx={{ p: { xs: 3, md: 4 } }}>
-              <Typography 
-                variant="h5" 
-                component="h3" 
+              <Typography
+                variant="h5"
+                component="h3"
                 gutterBottom
-                sx={{ 
+                sx={{
                   fontWeight: 600,
                   color: 'primary.main',
                   mb: 3
@@ -137,21 +136,21 @@ export const AboutPage: React.FC = () => {
                 Let's Connect
               </Typography>
 
-              <Stack 
-                direction={isMobile ? 'column' : 'row'} 
+              <Stack
+                direction={isMobile ? 'column' : 'row'}
                 spacing={3}
                 alignItems={isMobile ? 'stretch' : 'center'}
                 flexWrap="wrap"
                 useFlexGap
               >
                 {about.email && (
-                  <Paper 
+                  <Paper
                     elevation={2}
-                    sx={{ 
+                    sx={{
                       borderRadius: 3,
-                      p: 2, 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                      p: 2,
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: 2,
                       cursor: 'pointer',
                       transition: 'all 0.2s',
@@ -173,13 +172,13 @@ export const AboutPage: React.FC = () => {
                 )}
 
                 {about.gitHub && (
-                  <Paper 
+                  <Paper
                     elevation={2}
-                    sx={{ 
+                    sx={{
                       borderRadius: 3,
-                      p: 2, 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                      p: 2,
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: 2,
                       cursor: 'pointer',
                       transition: 'all 0.2s',
@@ -201,13 +200,13 @@ export const AboutPage: React.FC = () => {
                 )}
 
                 {about.linkedIn && (
-                  <Paper 
+                  <Paper
                     elevation={2}
-                    sx={{ 
+                    sx={{
                       borderRadius: 3,
-                      p: 2, 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                      p: 2,
+                      display: 'flex',
+                      alignItems: 'center',
                       gap: 2,
                       cursor: 'pointer',
                       transition: 'all 0.2s',

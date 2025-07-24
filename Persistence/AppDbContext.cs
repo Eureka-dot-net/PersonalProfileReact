@@ -14,6 +14,11 @@ namespace Persistence
 
         public DbSet<AboutMe> AboutMe => Set<AboutMe>();
 
+        public DbSet<Experience> Experiences => Set<Experience>();
+
+        public DbSet<SkillCategory> SkillCategories { get; set; }
+        public DbSet<Skill> Skills { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AboutMe>(entity =>
@@ -22,6 +27,12 @@ namespace Persistence
                 entity.OwnsOne(e => e.Bio);
                 entity.OwnsOne(e => e.Location);
             });
+
+            modelBuilder.Entity<SkillCategory>()
+            .HasMany(sc => sc.Skills)
+            .WithOne(s => s.SkillCategory)
+            .HasForeignKey(s => s.SkillCategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

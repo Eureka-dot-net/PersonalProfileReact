@@ -15,11 +15,12 @@ import {
   Person as PersonIcon,
 } from '@mui/icons-material';
 import { useAbout } from '../../lib/hooks/useAbout';
+import { useNavigate } from 'react-router-dom';
 
 export const NavigationBar: React.FC = () => {
   const { about, isLoading, isError } = useAbout();
   const theme = useTheme();
-
+  const navigate = useNavigate();
   if (isLoading) {
     return (
       <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
@@ -41,7 +42,7 @@ export const NavigationBar: React.FC = () => {
 
   return (
     <AppBar 
-        position="fixed" // Or 'fixed' if you want it to scroll with the page, adjust zIndex and top accordingly
+        position="fixed" 
         elevation={4}
         sx={{
           background: 'linear-gradient(to right, #e3f2fd, #ffffff)',
@@ -138,11 +139,7 @@ export const NavigationBar: React.FC = () => {
                       color: 'primary.main',
                     }
                   }}
-                  onClick={() => {
-                    // For now, just log the navigation
-                    console.log(`Navigate to ${item.path}`);
-                    // TODO: Implement actual navigation
-                  }}
+                  onClick={() => navigate(item.path)}
                 >
                   {item.label}
                 </Button>

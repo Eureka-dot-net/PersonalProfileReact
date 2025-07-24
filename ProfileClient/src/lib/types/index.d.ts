@@ -1,9 +1,10 @@
-export interface LocalizedString {
+
+type LocalizedString = {
   en: string;
   he: string;
 }
 
-export interface AboutMe {
+type AboutMe = {
   id: number;
   fullName: LocalizedString;
   bio: LocalizedString;
@@ -13,3 +14,18 @@ export interface AboutMe {
   linkedIn: string;
   profilePictureUrl: string;
 }
+
+type Experience = {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  startDate: string; // ISO string
+  endDate: string | null;
+  highlights: string[];
+};
+
+type SkillCategory = {
+  category: string;
+  skills: string[];
+};

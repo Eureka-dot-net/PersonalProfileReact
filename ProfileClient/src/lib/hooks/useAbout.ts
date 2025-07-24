@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import agent from '../api/agent';
-import type { AboutMe } from '../types';
 
 const ABOUT_KEY = ['about'];
 
