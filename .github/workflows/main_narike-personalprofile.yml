@@ -25,7 +25,7 @@ jobs:
 
       - name: Install deps and build react app
         run: |
-          cd client
+          cd ProfileClient
           npm install
           npm run build
           
