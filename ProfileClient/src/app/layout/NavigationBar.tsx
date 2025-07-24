@@ -102,7 +102,7 @@ export const NavigationBar: React.FC = () => {
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  Test {about.fullName.en}
+                  {about.fullName.en}
                 </Typography>
 
                 {about.location.en && (
