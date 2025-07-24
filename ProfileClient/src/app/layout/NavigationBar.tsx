@@ -43,33 +43,35 @@ export const NavigationBar: React.FC = () => {
 
   return (
     <Box
-  sx={{
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1100,
-    display: "flex",
-    justifyContent: "center",
-    pointerEvents: "none", // AppBar will handle interactions
-  }}
->
-  <AppBar
-    position="static" // Use static since Box is handling positioning
-    sx={{
-      width: "95%",
-      pointerEvents: "auto",
-      background: 'linear-gradient(to right, #e3f2fd, #ffffff)',
-      borderRadius: 3,
-      boxShadow: 3,
-    }}
-  >
-    <Toolbar sx={{ p: { xs: 2, md: 3 } }}>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+      sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1100,
+        display: "flex",
+        justifyContent: "center",
+        pointerEvents: "none", // AppBar will handle interactions
+      }}
+    >
+      <AppBar
+        position="static" // Use static since Box is handling positioning
+        sx={{
+          width: "95%",
+          pointerEvents: "auto",
+          background: 'linear-gradient(to right, #e3f2fd, #ffffff)',
+          borderRadius: 3,
+          boxShadow: 3,
+        }}
+      >
+        <Toolbar sx={{ p: { xs: 1, md: 2 } }}>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between',
-            flexDirection: { xs: 'column', md: 'row' },
+            flexDirection: { xs: 'row', md: 'row' },
+            flexWrap: 'wrap',
+            rowGap: 2,
             gap: { xs: 2, md: 3 }
           }}>
             {/* Logo/Profile Section */}
@@ -87,12 +89,12 @@ export const NavigationBar: React.FC = () => {
               >
                 {!about.profilePictureUrl && <PersonIcon fontSize="inherit" />}
               </Avatar>
-              
+
               <Box>
-                <Typography 
-                  variant="h6" 
-                  component="h1" 
-                  sx={{ 
+                <Typography
+                  variant="h6"
+                  component="h1"
+                  sx={{
                     fontWeight: 700,
                     background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                     backgroundClip: 'text',
@@ -100,13 +102,13 @@ export const NavigationBar: React.FC = () => {
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  {about.fullName.en}
+                  Test {about.fullName.en}
                 </Typography>
-                
+
                 {about.location.en && (
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
+                  <Typography
+                    variant="body2"
+                    sx={{
                       color: 'text.secondary',
                       fontSize: '0.875rem',
                       cursor: 'pointer',
@@ -124,10 +126,15 @@ export const NavigationBar: React.FC = () => {
             </Box>
 
             {/* Navigation Links */}
-            <Stack 
-              direction={{ xs: 'column', sm: 'row' }} 
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 3 }}
               alignItems="center"
+              sx={{
+                flexWrap: 'wrap',
+                justifyContent: { xs: 'center', md: 'flex-end' },
+                width: { xs: '100%', md: 'auto' },
+              }}
             >
               {navItems.map((item) => (
                 <Button
@@ -156,7 +163,7 @@ export const NavigationBar: React.FC = () => {
             </Stack>
           </Box>
         </Toolbar>
-    </AppBar>
+      </AppBar>
     </Box>
   );
 };
