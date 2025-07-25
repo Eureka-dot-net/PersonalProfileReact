@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Persistence
@@ -29,10 +30,17 @@ namespace Persistence
             });
 
             modelBuilder.Entity<SkillCategory>()
-            .HasMany(sc => sc.Skills)
-            .WithOne(s => s.SkillCategory)
-            .HasForeignKey(s => s.SkillCategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+                .HasMany(sc => sc.Skills)
+                .WithOne(s => s.SkillCategory)
+                .HasForeignKey(s => s.SkillCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Experience>()
+                .Property(e => e.Highlights)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                    v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null)!)
+                .HasColumnType("TEXT");
         }
     }
 }
