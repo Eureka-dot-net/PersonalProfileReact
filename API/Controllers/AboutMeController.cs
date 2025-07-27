@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.About.Queries;
+using Application.Core;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -11,12 +13,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<AboutMe>> Get()
         {
-            var about = await context.AboutMe.FirstOrDefaultAsync();
-            if (about == null)
-            {
-                return NotFound();
-            }
-            return Ok(about);
+            return HandleResult(await Mediator.Send(new GetAboutMe.Query()));
         }
 
         [HttpPut]

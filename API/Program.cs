@@ -1,3 +1,4 @@
+using Application.Skills.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -19,8 +20,11 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
-//        , sqlOptions => sqlOptions.EnableRetryOnFailure()));
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<SkillGroupDto>();
+});
 
 var app = builder.Build();
 
