@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace Persistence
 {
@@ -42,6 +43,7 @@ namespace Persistence
 
                 context.AboutMe.Add(about);
             }
+
             if (!context.Experiences.Any())
             {
                 var experiences = new List<Experience>
@@ -137,7 +139,10 @@ namespace Persistence
                             new Skill { Name = "C#.NET" },
                             new Skill { Name = "SQL" },
                             new Skill { Name = "JavaScript" },
-                            new Skill { Name = "HTML" }
+                            new Skill { Name = "HTML" },
+                            new Skill { Name = "CSS" },
+                            new Skill { Name = "Typescript" },
+                            new Skill { Name = "React" },
                         }
                     },
                     new SkillCategory
@@ -198,7 +203,66 @@ namespace Persistence
                             context.SkillCategories.AddRange(skillCategories);
                         }
 
+            if (!context.Projects.Any())
+            {
+                var projects = new List<Project>
+                {
+                    new Project
+                    {
+                        Name = "Personal Profile Website",
+                        Description = "A React + .NET app built to showcase my skill using react, C#.net and clean architecture.",
+                        GitHubRepo = "https://github.com/Eureka-dot-net/Reactivities",
+                        Url = "https://reactivities-narike.azurewebsites.net/",
+                        IsInProgress = false
+                    },
+                    new Project
+                    {
+                        Name = "React Project (Course)",
+                        Description = "A React + .NET app built while following along with a full-stack Udemy course.",
+                        GitHubRepo = "https://github.com/Eureka-dot-net/Reactivities",
+                        Url = "https://reactivities-narike.azurewebsites.net/",
+                        IsInProgress = false
+                    },
+                    new Project
+                    {
+                        Name = "NPC Info (Stardew Valley Mod)",
+                        Description = "Mod that displays helpful icons for NPCs—like birthdays, gifts, and more.",
+                        GitHubRepo = "https://github.com/Eureka-dot-net/NPCInfo",
+                        Url = "https://www.nexusmods.com/stardewvalley/mods/28947",
+                        IsInProgress = false,
+                        Images = new List<ProjectImage>
+                        {
+                            new ProjectImage
+                            {
+                                Url = "https://res.cloudinary.com/dqzgitlgn/image/upload/v1753774886/StardewValley1_ebih1x.png"
+                            },
+                            new ProjectImage
+                            {
+                                Url = "https://res.cloudinary.com/dqzgitlgn/image/upload/v1753774903/StardewValley2_cpbxvl.png"
+                            },
+                            new ProjectImage
+                            {
+                                Url = "https://res.cloudinary.com/dqzgitlgn/image/upload/v1753774914/StardewValley3_wuytgp.png"
+                            }
+                        }
+                    },
+                    new Project
+                    {
+                        Name = "Game Automation Scripts",
+                        Description = "Scripts and tools that automate repetitive gameplay tasks across different games.",
+                        IsInProgress = false
+                    },
+                    new Project
+                    {
+                        Name = "Language Learning App",
+                        Description = "Mobile app with gamified language learning, coin rewards, and house-building mechanics.",
+                        GitHubRepo = "https://github.com/your-username/language-learning-app",
+                        IsInProgress = true
+                    }
+                };
 
+                context.Projects.AddRange(projects);
+            }
 
             context.SaveChanges();
         }

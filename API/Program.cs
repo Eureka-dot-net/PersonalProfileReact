@@ -50,7 +50,11 @@ app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-db.Database.Migrate();
+
+await db.Database.EnsureDeletedAsync();
+await db.Database.EnsureCreatedAsync();
+
+//db.Database.Migrate();
 await DbInitialiser.SeedData(db);
 
 app.Run();

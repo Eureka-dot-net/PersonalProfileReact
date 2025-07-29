@@ -29,3 +29,13 @@ type SkillCategory = {
   category: string;
   skills: string[];
 };
+
+type Project = {
+  id: number;
+  name: string;
+  description: string;
+  url?: string;
+  gitHubRepo?: string;
+  isInProgress: boolean;
+  images: string[]; // Array of image URLs
+}

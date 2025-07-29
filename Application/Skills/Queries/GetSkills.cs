@@ -28,10 +28,11 @@ namespace Application.Skills.Queries
             {
                 var groupedSkills = await _context.Skills
                     .Include(s => s.SkillCategory)
-                    .GroupBy(s => s.SkillCategory.Title)
+                    .GroupBy(s => new { s.SkillCategory.Id, s.SkillCategory.Title })
+                    .OrderBy(g => g.Key.Id)
                     .Select(g => new SkillGroupDto
                     {
-                        Category = g.Key,
+                        Category = g.Key.Title,
                         Skills = g.Select(s => s.Name).ToList()
                     })
                     .ToListAsync(cancellationToken);

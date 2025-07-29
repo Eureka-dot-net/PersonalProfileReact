@@ -17,8 +17,11 @@ namespace Persistence
 
         public DbSet<Experience> Experiences => Set<Experience>();
 
-        public DbSet<SkillCategory> SkillCategories { get; set; }
-        public DbSet<Skill> Skills { get; set; }
+        public DbSet<SkillCategory> SkillCategories => Set<SkillCategory>();
+
+        public DbSet<Skill> Skills => Set<Skill>();
+
+        public DbSet<Project> Projects => Set<Project>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
