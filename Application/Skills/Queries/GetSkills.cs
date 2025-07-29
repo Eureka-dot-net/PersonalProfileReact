@@ -15,18 +15,11 @@ namespace Application.Skills.Queries
     {
         public record GetSkillGroupsQuery : IRequest<Result<List<SkillGroupDto>>>;
 
-        public class Handler : IRequestHandler<GetSkillGroupsQuery, Result<List<SkillGroupDto>>>
+        public class Handler(AppDbContext context) : IRequestHandler<GetSkillGroupsQuery, Result<List<SkillGroupDto>>>
         {
-            private readonly AppDbContext _context;
-
-            public Handler(AppDbContext context)
-            {
-                _context = context;
-            }
-
             public async Task<Result<List<SkillGroupDto>>> Handle(GetSkillGroupsQuery request, CancellationToken cancellationToken)
             {
-                var groupedSkills = await _context.Skills
+                var groupedSkills = await context.Skills
                     .Include(s => s.SkillCategory)
                     .GroupBy(s => new { s.SkillCategory.Id, s.SkillCategory.Title })
                     .OrderBy(g => g.Key.Id)

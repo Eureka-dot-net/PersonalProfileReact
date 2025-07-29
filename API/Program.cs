@@ -1,3 +1,4 @@
+using Application.Core;
 using Application.Skills.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,8 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<SkillGroupDto>();
 });
+
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfiles>());
 
 var app = builder.Build();
 
