@@ -212,7 +212,7 @@ namespace Persistence
                         Name = "Personal Profile Website",
                         Description = "A React + .NET app built to showcase my skill using react, C#.net and clean architecture.",
                         GitHubRepo = "https://github.com/Eureka-dot-net/Reactivities",
-                        Url = "https://reactivities-narike.azurewebsites.net/",
+                        Url = "https://narike-personalprofile.azurewebsites.net/",
                         IsInProgress = false
                     },
                     new Project
@@ -256,7 +256,7 @@ namespace Persistence
                     {
                         Name = "Language Learning App",
                         Description = "Mobile app with gamified language learning, coin rewards, and house-building mechanics.",
-                        GitHubRepo = "https://github.com/your-username/language-learning-app",
+                        GitHubRepo = "https://github.com/Eureka-dot-net/LanguageLearning",
                         IsInProgress = true
                     }
                 };
