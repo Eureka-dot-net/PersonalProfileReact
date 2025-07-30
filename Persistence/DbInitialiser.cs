@@ -292,7 +292,7 @@ namespace Persistence
             Additionally, the candidate is actively working on several personal projects and taking courses to fill any skill gaps.
 
             Projects:
-            {{projectsSummary}}
+            {{projectSummary}}
 
             Important Note for CV Generation:
             The candidate's personal contact information should be represented by the following placeholders for privacy. Please use these exact strings in the generated CV where appropriate:
