@@ -1,6 +1,7 @@
 using Application.Core;
 using Application.Interfaces;
 using Application.Skills.DTOs;
+using Infrastructure.CV;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfiles>());
 
 builder.Services.AddHttpClient<IGeminiService, GeminiService>();
+
+builder.Services.AddScoped<ICvFileBuilder, CvFileBuilder>();
 
 var app = builder.Build();
 

@@ -1,12 +1,23 @@
 import { useMutation } from '@tanstack/react-query';
 import agent from '../api/agent';
 
+export interface FileDto {
+  fileName: string;
+  contentType: string;
+  content: string; // base64-encoded string
+}
+
+export interface MatchEvaluationDto {
+  matchPercentage: number;
+  explanation: string;
+}
+
 export interface JobMatchDto {
   isSuccess: boolean;
   isQuotaExceeded?: boolean;
   retryAfter?: number | null;
-  matchPercentage?: number;
-  explanation?: string;
+  matchEvaluation: MatchEvaluationDto;
+  tailoredCv: FileDto;
   errorMessage?: string | null;
 }
 

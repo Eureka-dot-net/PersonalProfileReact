@@ -1,4 +1,5 @@
-﻿using Application.Projects.DTOs;
+﻿using Application.JobMatch.DTOs;
+using Application.Projects.DTOs;
 using Application.Skills.DTOs;
 using AutoMapper;
 using Domain;
@@ -17,7 +18,6 @@ namespace Application.Core
         {
             CreateMap<Project, ProjectDto>()
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images.Select(i => i.Url)));
-           
         }
     }
 }

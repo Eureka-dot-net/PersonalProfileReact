@@ -4,6 +4,7 @@ using Application.JobMatch.DTOs;
 using Application.Projects.Queries;
 using Application.PromptTemplate.Queries;
 using Application.Skills.Queries;
+using AutoMapper;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -15,15 +16,15 @@ namespace Application.JobMatch.Queries
 {
     public class GetJobMatch
     {
-        public record Query(string JobDescription) : IRequest<JobMatchDto> { }
+        public record Query(string JobDescription) : IRequest<JobMatchResponseDto> { }
 
-        public class Handler(IGeminiService geminiService, IMediator mediator) : IRequestHandler<Query, JobMatchDto>
+        public class Handler(IGeminiService geminiService, IMediator mediator, ICvFileBuilder builder) : IRequestHandler<Query, JobMatchResponseDto>
         {
-            public async Task<JobMatchDto> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<JobMatchResponseDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 var experienceResult = await mediator.Send(new GetExperience.Query(), cancellationToken);
                 if (!experienceResult.IsSuccess)
-                    return new JobMatchDto
+                    return new JobMatchResponseDto
                     {
                         IsSuccess = false,
                         ErrorMessage = "Could not load experience: " +(experienceResult.Error ?? "Unknown error")
@@ -34,7 +35,7 @@ namespace Application.JobMatch.Queries
                 var skillsResult = await mediator.Send(new GetSkills.GetSkillGroupsQuery(), cancellationToken);
 
                 if (!skillsResult.IsSuccess)
-                    return new JobMatchDto
+                    return new JobMatchResponseDto
                     {
                         IsSuccess = false,
                         ErrorMessage = "Could not load skills: " + (skillsResult.Error ?? "Unknown error")
@@ -45,7 +46,7 @@ namespace Application.JobMatch.Queries
                 var projectsResult = await mediator.Send(new GetProjects.Query(), cancellationToken);
 
                 if (!projectsResult.IsSuccess)
-                    return new JobMatchDto
+                    return new JobMatchResponseDto
                     {
                         IsSuccess = false,
                         ErrorMessage = "Could not load projects: " + (projectsResult.Error ?? "Unknown error")
@@ -55,7 +56,7 @@ namespace Application.JobMatch.Queries
                 var promptResult = await mediator.Send(new GetLatestPromptTemplate.Query(), cancellationToken);
 
                 if (!promptResult.IsSuccess)
-                    return new JobMatchDto
+                    return new JobMatchResponseDto
                     {
                         IsSuccess = false,
                         ErrorMessage = "Could not load prompt template: " + (promptResult.Error ?? "Unknown error")
@@ -65,7 +66,23 @@ namespace Application.JobMatch.Queries
 
                 var jobMatchResult = await geminiService.GetJobMatchScoreAsync(request.JobDescription, experiences, skills, projects, prompt, cancellationToken);
 
-                return jobMatchResult;
+                var tailoredCvBytes = await builder.GenerateDoc(jobMatchResult.TailoredCv, cancellationToken);
+
+                var fileDto = new FileDto
+                {
+                    FileName = "TailoredCV.docx",
+                    ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    Content = tailoredCvBytes
+                };
+
+                var result = new JobMatchResponseDto
+                {
+                    IsSuccess = true,
+                    MatchEvaluation = jobMatchResult.MatchEvaluation,
+                    TailoredCv = fileDto
+                };
+
+                return result;
 
             }
         }

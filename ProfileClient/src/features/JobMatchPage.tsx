@@ -24,7 +24,7 @@ import {
   Error as ErrorIcon,
   Google as GoogleIcon,
 } from '@mui/icons-material';
-import { useJobMatch, type JobMatchDto } from '../lib/hooks/useJobMatch';
+import { useJobMatch, type FileDto, type JobMatchDto } from '../lib/hooks/useJobMatch';
 
 export const JobMatchPage: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
@@ -62,12 +62,30 @@ export const JobMatchPage: React.FC = () => {
     return 'Poor Match';
   };
 
+  const downloadTailoredCv = (file: FileDto) => {
+    const byteCharacters = atob(file.content);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: file.contentType });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = file.fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: 2, px: { xs: 2, sm: 3 } }}>
       <Grid container spacing={2}>
         {/* Header Section */}
         <Grid size={12}>
-          <Paper 
+          <Paper
             elevation={6}
             sx={{
               borderRadius: 4,
@@ -94,21 +112,21 @@ export const JobMatchPage: React.FC = () => {
                 <WorkIcon sx={{ fontSize: '2rem' }} />
               </Box>
               <Box>
-                <Typography 
-                  variant="h4" 
+                <Typography
+                  variant="h4"
                   component="h1"
-                  sx={{ 
-                    fontWeight: 700, 
-                    color: 'text.primary', 
+                  sx={{
+                    fontWeight: 700,
+                    color: 'text.primary',
                     mb: 0.5,
                     fontSize: { xs: '1.75rem', sm: '2.125rem' }
                   }}
                 >
                   Job Match Analyzer
                 </Typography>
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
+                <Typography
+                  variant="body1"
+                  sx={{
                     color: 'text.secondary',
                     fontSize: { xs: '0.9rem', sm: '1rem' }
                   }}
@@ -117,7 +135,7 @@ export const JobMatchPage: React.FC = () => {
                 </Typography>
               </Box>
             </Box>
-            
+
             {/* Powered by Gemini indicator */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
               <Chip
@@ -133,7 +151,7 @@ export const JobMatchPage: React.FC = () => {
 
         {/* Input Section */}
         <Grid size={12}>
-          <Paper 
+          <Paper
             elevation={6}
             sx={{
               borderRadius: 4,
@@ -142,10 +160,10 @@ export const JobMatchPage: React.FC = () => {
             }}
           >
             <Box sx={{ p: { xs: 2, md: 3 } }}>
-              <Typography 
-                variant="h6" 
+              <Typography
+                variant="h6"
                 gutterBottom
-                sx={{ 
+                sx={{
                   fontWeight: 600,
                   color: 'text.primary',
                   mb: 2,
@@ -168,7 +186,7 @@ export const JobMatchPage: React.FC = () => {
                   placeholder="Paste the job description here..."
                   variant="outlined"
                   error={isOverLimit}
-                  sx={{ 
+                  sx={{
                     mb: 1.5,
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 2,
@@ -179,8 +197,8 @@ export const JobMatchPage: React.FC = () => {
 
                 {/* Character counter and validation */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography 
-                    variant="caption" 
+                  <Typography
+                    variant="caption"
                     color={isOverLimit ? 'error' : 'text.secondary'}
                     sx={{ fontWeight: 500 }}
                   >
@@ -199,8 +217,8 @@ export const JobMatchPage: React.FC = () => {
 
                 {/* Over limit warning */}
                 {isOverLimit && (
-                  <Alert 
-                    severity="warning" 
+                  <Alert
+                    severity="warning"
                     icon={<WarningIcon />}
                     sx={{ borderRadius: 2, mb: 3 }}
                   >
@@ -208,7 +226,7 @@ export const JobMatchPage: React.FC = () => {
                       <strong>Job description is too long!</strong>
                     </Typography>
                     <Typography variant="body2">
-                      Please shorten your job description to {MAX_CHARACTERS} characters or less. 
+                      Please shorten your job description to {MAX_CHARACTERS} characters or less.
                       Consider using an AI tool like ChatGPT or Claude to summarize the key requirements and responsibilities.
                     </Typography>
                   </Alert>
@@ -219,8 +237,8 @@ export const JobMatchPage: React.FC = () => {
                   variant="contained"
                   startIcon={isPending ? <CircularProgress size={20} color="inherit" /> : <PsychologyIcon />}
                   disabled={isPending || !jobDescription.trim() || isOverLimit}
-                  sx={{ 
-                    borderRadius: 2, 
+                  sx={{
+                    borderRadius: 2,
                     px: 4,
                     width: { xs: '100%', sm: 'auto' },
                     fontSize: { xs: '0.9rem', sm: '1rem' }
@@ -237,8 +255,8 @@ export const JobMatchPage: React.FC = () => {
         {/* Error State */}
         {isError && (
           <Grid size={12}>
-            <Alert 
-              severity="error" 
+            <Alert
+              severity="error"
               icon={<ErrorIcon />}
               sx={{ borderRadius: 2 }}
             >
@@ -252,7 +270,7 @@ export const JobMatchPage: React.FC = () => {
         {/* Results Section */}
         {result && (
           <Grid size={12}>
-            <Paper 
+            <Paper
               elevation={6}
               sx={{
                 borderRadius: 4,
@@ -261,18 +279,20 @@ export const JobMatchPage: React.FC = () => {
               }}
             >
               {/* Results Header */}
-              <Box 
+
+              <Box
                 sx={{
                   background: 'linear-gradient(to right, #e8f5e8, #ffffff)',
                   p: { xs: 2, md: 3 },
                   borderBottom: `1px solid ${theme.palette.divider}`,
                 }}
               >
-                <Typography 
-                  variant="h5" 
+                <Box display="flex" justifyContent="space-between" alignItems="center" mt={4} mb={2}>
+                <Typography
+                  variant="h5"
                   component="h2"
-                  sx={{ 
-                    fontWeight: 700, 
+                  sx={{
+                    fontWeight: 700,
                     color: 'text.primary',
                     display: 'flex',
                     alignItems: 'center',
@@ -280,14 +300,25 @@ export const JobMatchPage: React.FC = () => {
                     mb: 1.5
                   }}
                 >
+                  
                   <TrendingUpIcon />
                   Match Analysis Results
                 </Typography>
-
+                {result.tailoredCv?.fileName && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => downloadTailoredCv(result.tailoredCv)}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    Download CV
+                  </Button>
+                )}
+                </Box>
                 {/* Quota Warning */}
                 {result.isQuotaExceeded && (
-                  <Alert 
-                    severity="warning" 
+                  <Alert
+                    severity="warning"
                     icon={<WarningIcon />}
                     sx={{ borderRadius: 2, mb: 2 }}
                   >
@@ -299,8 +330,8 @@ export const JobMatchPage: React.FC = () => {
 
                 {/* Error Message */}
                 {result.errorMessage && (
-                  <Alert 
-                    severity="error" 
+                  <Alert
+                    severity="error"
                     icon={<ErrorIcon />}
                     sx={{ borderRadius: 2, mb: 2 }}
                   >
@@ -312,7 +343,7 @@ export const JobMatchPage: React.FC = () => {
               </Box>
 
               {/* Results Body */}
-              {result.isSuccess && result.matchPercentage !== undefined && (
+              {result.isSuccess && result.matchEvaluation.matchPercentage !== undefined && (
                 <Box sx={{ p: { xs: 2, md: 3 } }}>
                   {/* Match Percentage */}
                   <Box sx={{ mb: 3 }}>
@@ -321,18 +352,18 @@ export const JobMatchPage: React.FC = () => {
                         Match Score
                       </Typography>
                       <Chip
-                        label={getMatchLabel(result.matchPercentage)}
-                        color={getMatchColor(result.matchPercentage)}
+                        label={getMatchLabel(result.matchEvaluation.matchPercentage)}
+                        color={getMatchColor(result.matchEvaluation.matchPercentage)}
                         variant="filled"
                         sx={{ borderRadius: 2, fontWeight: 600 }}
                       />
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                       <LinearProgress
                         variant="determinate"
-                        value={result.matchPercentage}
-                        color={getMatchColor(result.matchPercentage)}
+                        value={result.matchEvaluation.matchPercentage}
+                        color={getMatchColor(result.matchEvaluation.matchPercentage)}
                         sx={{
                           flexGrow: 1,
                           height: 12,
@@ -341,30 +372,30 @@ export const JobMatchPage: React.FC = () => {
                           width: { xs: '100%', sm: 'auto' }
                         }}
                       />
-                      <Typography 
-                        variant="h5" 
-                        sx={{ 
+                      <Typography
+                        variant="h5"
+                        sx={{
                           fontWeight: 700,
-                          color: `${getMatchColor(result.matchPercentage)}.main`,
+                          color: `${getMatchColor(result.matchEvaluation.matchPercentage)}.main`,
                           minWidth: '60px',
                           textAlign: { xs: 'center', sm: 'right' },
                           fontSize: { xs: '1.5rem', sm: '1.5rem' }
                         }}
                       >
-                        {result.matchPercentage}%
+                        {result.matchEvaluation.matchPercentage}%
                       </Typography>
                     </Box>
                   </Box>
 
                   {/* Explanation */}
-                  {result.explanation && (
+                  {result.matchEvaluation.explanation && (
                     <>
                       <Divider sx={{ mb: 2 }} />
                       <Box>
-                        <Typography 
-                          variant="h6" 
+                        <Typography
+                          variant="h6"
                           gutterBottom
-                          sx={{ 
+                          sx={{
                             fontWeight: 600,
                             color: 'text.primary',
                             mb: 2,
@@ -376,25 +407,25 @@ export const JobMatchPage: React.FC = () => {
                           <PsychologyIcon />
                           Analysis Explanation
                         </Typography>
-                        
-                        <Paper 
+
+                        <Paper
                           elevation={1}
-                          sx={{ 
-                            p: 2, 
+                          sx={{
+                            p: 2,
                             bgcolor: 'grey.50',
                             borderRadius: 2,
                             border: `1px solid ${theme.palette.divider}`
                           }}
                         >
-                          <Typography 
+                          <Typography
                             variant="body1"
-                            sx={{ 
+                            sx={{
                               lineHeight: 1.8,
                               color: 'text.primary',
                               whiteSpace: 'pre-line' // This preserves line breaks
                             }}
                           >
-                            {result.explanation}
+                            {result.matchEvaluation.explanation}
                           </Typography>
                         </Paper>
                       </Box>
@@ -409,11 +440,11 @@ export const JobMatchPage: React.FC = () => {
         {/* Empty State / Instructions */}
         {!result && !isPending && (
           <Grid size={12}>
-            <Paper 
-              elevation={4} 
-              sx={{ 
-                borderRadius: 3, 
-                p: 4, 
+            <Paper
+              elevation={4}
+              sx={{
+                borderRadius: 3,
+                p: 4,
                 textAlign: 'center',
                 bgcolor: 'grey.50'
               }}

@@ -269,39 +269,100 @@ namespace Persistence
                 var promptTemplate = new PromptTemplate
                 {
                     Name = "Job Match Evaluation",
-                    Description = "Evaluates how well a candidate matches a software developer job description.",
+                    Description = "Evaluates candidate match and generates a tailored CV for a software developer role.",
                     Template = """
-                    You are an AI assistant that evaluates how well a candidate matches a software developer job description.
+            You are an expert AI assistant specializing in software developer recruitment. Your task is to analyze a candidate's profile against a job description and generate two outputs:
+            1. A match evaluation, including a percentage and explanation.
+                - Keep your explanation under 250 words.
+                - Use \n for line breaks between paragraphs or key points.
+                - Avoid using markdown formatting, bullet points, or code blocks.
+                - Structure your explanation with clear paragraphs separated by \n\n.
+                - Highlight key points concisely in separate sentences.
+                - When exact matches are not found, favorably highlight similar or transferable skills and experience. 
+            2. A complete, tailored CV in a structured JSON format, prioritizing information most relevant to the job.
 
-                    Please analyze the candidate's experience and skills listed below, and determine how closely they align with the requirements of the job.
+            Candidate Profile:
 
-                    When exact matches are not found, favorably highlight similar or transferable skills and experience. Focus on how the candidate could still be a strong fit for the role, even if there are gaps.
+            Experience:
+            {{experienceSummary}}
 
-                    The candidate has the following experience:
-                    {{experienceSummary}}
+            Skills:
+            {{skillsSummary}}
 
-                    Additionally, the candidate is actively working on several personal projects and taking courses to fill any skill gaps.
+            Additionally, the candidate is actively working on several personal projects and taking courses to fill any skill gaps.
 
-                    And the following skills:
-                    {{skillsSummary}}
+            Projects:
+            {{projectsSummary}}
 
-                    The job description is:
-                    ---
-                    {{jobDescription}}
-                    ---
+            Important Note for CV Generation:
+            The candidate's personal contact information should be represented by the following placeholders for privacy. Please use these exact strings in the generated CV where appropriate:
+            - Candidate Name: CANDIDATE_NAME
+            - Candidate Email: CANDIDATE_EMAIL
+            - Candidate Phone: CANDIDATE_PHONE
+            - Candidate LinkedIn URL: CANDIDATE_LINKEDIN_URL
+            - Candidate Portfolio URL: CANDIDATE_PORTFOLIO_URL
 
-                    Please respond **briefly** and **clearly** in the following JSON format with no extra text:
-                    {
-                      "matchPercentage": number,
-                      "explanation": "text"
-                    }
+            Job Description:
+            ---
+            {{jobDescription}}
+            ---
 
-                    - Keep your explanation under 250 words.
-                    - Use \n for line breaks between paragraphs or key points.
-                    - Avoid using markdown formatting, bullet points, or code blocks.
-                    - Structure your explanation with clear paragraphs separated by \n\n.
-                    - Highlight key points concisely in separate sentences.
-                    """,
+            Structure to return (JSON):
+            {
+              "matchEvaluation": {
+                "matchPercentage": 0–100,
+                "explanation": "A brief summary of how well the candidate fits the role."
+              },
+              "tailoredCv": {
+                "name": "CANDIDATE_NAME",
+                "contactInfo": "CANDIDATE_EMAIL | CANDIDATE_PHONE | CANDIDATE_LINKEDIN_URL | CANDIDATE_PORTFOLIO_URL",
+                "summary": "Tailored personal summary based on job description",
+                "experience": [
+                  {
+                    "title": "Job Title",
+                    "company": "Company Name",
+                    "location": "City / Remote",
+                    "startDate": "yyyy-mm-dd",   // e.g., 2022-01-01
+                    "endDate": "yyyy-mm-dd or today's date if current",
+                    "highlights": [
+                      "Achievement 1",
+                      "Achievement 2"
+                    ]
+                  }
+                ],
+                "projects": [
+                  {
+                    "name": "Project Name",
+                    "description": "Brief project description.",
+                    "url": "https://project-url.com",
+                    "gitHubRepo": "https://github.com/user/project",
+                    "isInProgress": true,
+                    "images": []
+                  }
+                ],
+                "skills": [
+                  {
+                    "category": "Programming Languages",
+                    "skills": ["C#", "Python", "JavaScript"]
+                  },
+                  {
+                    "category": "Frameworks and Libraries",
+                    "skills": [".NET", "React", "Entity Framework"]
+                  },
+                  {
+                    "category": "Soft Skills",
+                    "skills": ["Communication", "Problem Solving"]
+                  },
+                  {
+                    "category": (any other categories missing from above),
+                    "skills": (any other skills missing)
+                  }
+                ]
+              }
+            }
+           
+            Ensure all sections under "tailoredCv" are populated based on the provided candidate data and the job description, emphasizing relevance. If a section from the candidate's profile is not relevant to the job description, it can be omitted or briefly mentioned if it demonstrates transferable skills. If a CV section has no relevant content, it should be an empty array or an empty string. The "name" and "contactInfo" MUST use the specified placeholders. Remember that we are trying to give the candidate the best possiblity to be invited to an interview while sticking to the truth
+            """,
                     CreatedAt = DateTime.UtcNow
                 };
 
