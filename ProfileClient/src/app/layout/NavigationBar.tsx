@@ -51,6 +51,7 @@ export const NavigationBar: React.FC = () => {
     { label: 'Experience', path: '/experience' },
     { label: 'Skills', path: '/skills' },
     { label: 'Projects', path: '/projects' },
+    { label: 'Job Match', path: '/jobmatch' },
   ];
 
   const handleMobileMenuToggle = () => {

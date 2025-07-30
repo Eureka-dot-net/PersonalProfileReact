@@ -8,24 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Experience.Queries
+namespace Application.Experience.Queriess
 {
     public class GetExperience
     {
-        public record GetExperienceListQuery : IRequest<Result<List<Domain.Experience>>>;
+        public record Query : IRequest<Result<List<Domain.Experience>>>;
 
-        public class Handler : IRequestHandler<GetExperienceListQuery, Result<List<Domain.Experience>>>
+        public class Handler(AppDbContext context) : IRequestHandler<Query, Result<List<Domain.Experience>>>
         {
-            private readonly AppDbContext _context;
-
-            public Handler(AppDbContext context)
+            public async Task<Result<List<Domain.Experience>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                _context = context;
-            }
-
-            public async Task<Result<List<Domain.Experience>>> Handle(GetExperienceListQuery request, CancellationToken cancellationToken)
-            {
-                var experiences = await _context.Experiences
+                var experiences = await context.Experiences
                     .OrderByDescending(e => e.EndDate ?? DateTime.MaxValue)
                     .ThenByDescending(e => e.StartDate)
                     .ToListAsync(cancellationToken);

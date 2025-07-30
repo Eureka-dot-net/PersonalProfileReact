@@ -1,5 +1,7 @@
 using Application.Core;
+using Application.Interfaces;
 using Application.Skills.DTOs;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -28,6 +30,8 @@ builder.Services.AddMediatR(cfg =>
 });
 
 builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfiles>());
+
+builder.Services.AddHttpClient<IGeminiService, GeminiService>();
 
 var app = builder.Build();
 

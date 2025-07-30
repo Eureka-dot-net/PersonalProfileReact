@@ -4,6 +4,7 @@ import { createBrowserRouter } from  "react-router-dom";
 import App from "../layout/App";
 import { SkillsPage } from "../../features/SkillsPage";
 import { ProjectPage } from "../../features/ProjectPage";
+import { JobMatchPage } from "../../features/JobMatchPage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { path: "experience", element: <ExperiencePage /> },
       { path: "skills", element: <SkillsPage /> },
       { path: "projects", element: <ProjectPage /> },
+      { path: "jobmatch", element: <JobMatchPage /> },
     ],
   },
 ]);
