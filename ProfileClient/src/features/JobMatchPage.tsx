@@ -292,7 +292,7 @@ export const JobMatchPage: React.FC = () => {
                     sx={{ borderRadius: 2, mb: 2 }}
                   >
                     <Typography variant="body2">
-                      API quota exceeded. Please try again {result.retryAfter ? `in ${result.retryAfter} seconds` : 'later'}.
+                      API quota exceeded. Please try again {result.retryAfter ? `in ${result.retryAfter}` : 'tomorrow'}.
                     </Typography>
                   </Alert>
                 )}

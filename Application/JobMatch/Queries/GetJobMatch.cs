@@ -1,6 +1,8 @@
 ﻿using Application.Experience.Queriess;
 using Application.Interfaces;
 using Application.JobMatch.DTOs;
+using Application.Projects.Queries;
+using Application.PromptTemplate.Queries;
 using Application.Skills.Queries;
 using MediatR;
 using System;
@@ -40,7 +42,28 @@ namespace Application.JobMatch.Queries
 
                 var skills = skillsResult.Value!;
 
-                var jobMatchResult = await geminiService.GetJobMatchScoreAsync(request.JobDescription, experiences, skills, cancellationToken);
+                var projectsResult = await mediator.Send(new GetProjects.Query(), cancellationToken);
+
+                if (!projectsResult.IsSuccess)
+                    return new JobMatchDto
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Could not load projects: " + (projectsResult.Error ?? "Unknown error")
+                    };
+                var projects = projectsResult.Value!;
+
+                var promptResult = await mediator.Send(new GetLatestPromptTemplate.Query(), cancellationToken);
+
+                if (!promptResult.IsSuccess)
+                    return new JobMatchDto
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Could not load prompt template: " + (promptResult.Error ?? "Unknown error")
+                    };
+
+                var prompt = promptResult.Value!.Template!;
+
+                var jobMatchResult = await geminiService.GetJobMatchScoreAsync(request.JobDescription, experiences, skills, projects, prompt, cancellationToken);
 
                 return jobMatchResult;
 

@@ -23,6 +23,8 @@ namespace Persistence
 
         public DbSet<Project> Projects => Set<Project>();
 
+        public DbSet<PromptTemplate> PromptTemplates => Set<PromptTemplate>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AboutMe>(entity =>

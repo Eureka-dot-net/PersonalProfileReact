@@ -1,11 +1,16 @@
-﻿using Application.Interfaces;
+﻿using Application.Extensions;
+using Application.Interfaces;
 using Application.JobMatch.DTOs;
+using Application.Projects.DTOs;
+using Application.PromptTemplate.Queries;
 using Application.Skills.DTOs;
 using Domain;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -27,58 +32,131 @@ namespace Infrastructure.Services
 
     public class GeminiService : IGeminiService
     {
-        private const string AiProfileSummary = @"
-            Narike Avenant is an IT professional with 17+ years in software development and DevOps. 
-            Expert in C#.NET, ASP.NET Core, Entity Framework Core and SQL; solid JavaScript/TypeScript, React, HTML/CSS front‑end skills. 
-            Proven track record building and optimizing CI/CD pipelines in Azure DevOps, managing cloud infrastructure (Azure IaaS/PaaS), PowerShell scripting, ARM templates and Desired State Configuration. 
-            Key achievements include a 25% faster deployments, £20k monthly Azure cost reduction, and blue/green release automation. 
-            Led migrations from TFS to Git, launched first Azure‑hosted Guidewire deployments, and trained junior engineers. 
-            Notable projects: personal React + .NET profile site, full‑stack Udemy course app, Stardew Valley NPC Info mod, and a gamified language‑learning mobile app.
-        ";
-
         private readonly string _apiKey;
         private readonly HttpClient _httpClient;
 
-        public GeminiService(IConfiguration config, HttpClient httpClient)
+        public GeminiService(IConfiguration config, HttpClient httpClient, ISender sender)
         {
             _apiKey = config["Gemini:ApiKey"] ?? throw new InvalidOperationException("Gemini API key is missing");
             _httpClient = httpClient;
         }
 
-        private string BuildPrompt(string jobDescription)
+        private async Task<string> BuildPrompt(string jobDescription, List<Experience> experiences, List<SkillGroupDto> skills, List<ProjectDto> projects, string prompt)
         {
-            var prompt = $$"""
-                You are an AI assistant that evaluates how well a candidate matches a software developer job description.
+            string experienceSummary = GetExperienceSummary(experiences);
+            string skillsSummary = GetSkillSummary(skills);
+            string projectSummary = GetProjectSummary(projects);
 
-                Use the candidate summary below for evaluation (no need for additional background text):
-                ---
-                {{AiProfileSummary}}
-                ---
+            return prompt
+                .Replace(@"{{experienceSummary}}", experienceSummary)
+                .Replace(@"{{skillsSummary}}", skillsSummary)
+                .Replace(@"{{jobDescription}}", jobDescription)
+                .Replace(@"{{projectSummary}}", projectSummary);
 
-                The job description is:
-                ---
-                {{jobDescription}}
-                ---
-
-                Please respond **briefly** and **clearly** in the following JSON format with no extra text:
-                {
-                  "matchPercentage": number,
-                  "explanation": "text"
-                }
-
-                - Keep your explanation under 250 words.
-                - Use \n for line breaks between paragraphs or key points.
-                - Avoid markdown formatting, bullet points, or code blocks.
-                - Structure your explanation with clear paragraphs separated by \n\n.
-                - Highlight key points concisely in separate sentences.
-
-                """;
-            return prompt;
         }
 
-        public async Task<JobMatchDto> GetJobMatchScoreAsync(string jobDescription, List<Experience> experiences, List<SkillGroupDto> skills, CancellationToken cancellationToken)
+        private static string GetSkillSummary(List<SkillGroupDto> skills)
         {
-            var prompt = BuildPrompt(jobDescription);
+            return string.Join("\n", skills.Select(s =>
+                $"- {s.Category}: {string.Join(", ", s.Skills)}"));
+        }
+
+        private static string GetProjectSummary(List<ProjectDto> projects)
+        {
+            return string.Join("\n\n", projects.Select(p =>
+            {
+                var lines = new List<string>
+                {
+                    $"- **{p.Name}**",
+                    $"  Description: {p.Description}"
+                };
+
+                if (!string.IsNullOrWhiteSpace(p.Url))
+                    lines.Add($"  Live URL: {p.Url}");
+
+                if (!string.IsNullOrWhiteSpace(p.GitHubRepo))
+                    lines.Add($"  GitHub: {p.GitHubRepo}");
+
+                if (p.IsInProgress)
+                    lines.Add("  Status: In progress");
+
+                return string.Join("\n", lines);
+            }));
+        }
+
+        private static string GetExperienceSummary(List<Experience> experiences)
+        {
+            return string.Join("\n\n", experiences.Select(e =>
+                $"- {e.Title} at {e.Company} ({e.StartDate:yyyy-MM} to {(e.EndDate?.ToString("yyyy-MM")
+                ?? "Present")}):\n  {string.Join("\n  ", e.Highlights)}"));
+        }
+
+        // Add this private helper method to your class
+        private async Task<HttpResponseMessage> SendRequestWithRetries(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken,
+            int maxRetries = 3,
+            int initialDelayMilliseconds = 1000) // 1 second
+        {
+            int currentRetry = 0;
+            while (currentRetry < maxRetries)
+            {
+                var response = await _httpClient.SendAsync(request, cancellationToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+
+                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    // Extract Retry-After header if present
+                    int retryAfterSeconds = 0;
+                    if (response.Headers.TryGetValues("Retry-After", out IEnumerable<string>? retryAfterValues))
+                    {
+                        if (int.TryParse(retryAfterValues.FirstOrDefault(), out int seconds))
+                        {
+                            retryAfterSeconds = seconds;
+                        }
+                    }
+
+                    // Use Retry-After if provided, otherwise exponential backoff
+                    int delay = retryAfterSeconds > 0
+                        ? retryAfterSeconds * 1000 // Convert to milliseconds
+                        : initialDelayMilliseconds * (int)Math.Pow(2, currentRetry);
+
+                    Console.WriteLine($"Rate limit hit (429). Retrying in {delay / 1000} seconds. Attempt {currentRetry + 1}/{maxRetries}");
+                    await Task.Delay(delay, cancellationToken);
+
+                    currentRetry++;
+                    // Important: Recreate the HttpRequestMessage for each retry
+                    // The HttpRequestMessage can only be sent once.
+                    request = request.Clone();
+                }
+                else if (response.StatusCode == HttpStatusCode.ServiceUnavailable) // 503
+                {
+                    // For 503, also apply exponential backoff, but don't count it as a quota exceed.
+                    int delay = initialDelayMilliseconds * (int)Math.Pow(2, currentRetry);
+                    Console.WriteLine($"Service Unavailable (503). Retrying in {delay / 1000} seconds. Attempt {currentRetry + 1}/{maxRetries}");
+                    await Task.Delay(delay, cancellationToken);
+                    currentRetry++;
+                    request = request.Clone(); // Recreate request
+                }
+                else
+                {
+                    // For other non-success status codes, don't retry, just return the response
+                    return response;
+                }
+            }
+
+            // If all retries fail, return the last response
+            return await _httpClient.SendAsync(request, cancellationToken); // Re-send one last time or return the last failed response
+                                                                            // For simplicity, here we send it one last time, but you might want to return the last `response` from the loop.
+        }
+
+        public async Task<JobMatchDto> GetJobMatchScoreAsync(string jobDescription, List<Experience> experiences, List<SkillGroupDto> skills, List<ProjectDto> projects, string prompt, CancellationToken cancellationToken)
+        {
+            var requestprompt = await BuildPrompt(jobDescription, experiences, skills, projects, prompt);
 
             var requestBody = new
             {
@@ -88,7 +166,7 @@ namespace Infrastructure.Services
             {
                 parts = new[]
                 {
-                    new { text = prompt }
+                    new { text = requestprompt }
                 }
             }
         }
@@ -97,33 +175,69 @@ namespace Infrastructure.Services
             var requestJson = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={_apiKey}"
+            )
+            {
+                Content = content
+            };
+
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
             try
             {
-                var request = new HttpRequestMessage(
-                    HttpMethod.Post,
-                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={_apiKey}"
-                )
-                {
-                    Content = content
-                };
-
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var response = await _httpClient.SendAsync(request, cancellationToken);
+                // Use the new helper method for sending the request with retries
+                var response = await SendRequestWithRetries(request, cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return new JobMatchDto
+                    // Handle 429 specifically
+                    if (response.StatusCode == HttpStatusCode.TooManyRequests)
                     {
-                        IsSuccess = false,
-                        ErrorMessage = $"Gemini API error: {response.StatusCode}"
-                    };
+                        int? retryAfterSeconds = null;
+                        if (response.Headers.TryGetValues("Retry-After", out IEnumerable<string>? retryAfterValues))
+                        {
+                            if (int.TryParse(retryAfterValues.FirstOrDefault(), out int seconds))
+                            {
+                                retryAfterSeconds = seconds;
+                            }
+                        }
+
+                        return new JobMatchDto
+                        {
+                            IsSuccess = false,
+                            IsQuotaExceeded = true, // Indicate that quota was exceeded
+                            RetryAfter = retryAfterSeconds + " seconds",
+                            ErrorMessage = "Gemini API rate limit exceeded. Please try again later."
+                        };
+                    }
+                    else if (response.StatusCode == HttpStatusCode.ServiceUnavailable) // 503
+                    {
+                        // This case should be mostly handled by the retry logic in SendRequestWithRetries,
+                        // but if it still fails after max retries, you'll reach here.
+                        return new JobMatchDto
+                        {
+                            IsSuccess = false,
+                            ErrorMessage = $"Gemini API service unavailable after multiple retries. ({response.StatusCode})"
+                        };
+                    }
+                    else
+                    {
+                        // General error handling for other non-success status codes
+                        return new JobMatchDto
+                        {
+                            IsSuccess = false,
+                            ErrorMessage = $"Gemini API error: {response.StatusCode}"
+                        };
+                    }
                 }
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
                 using var json = JsonDocument.Parse(responseText);
 
+                // Your existing JSON parsing logic
                 var rawText = json.RootElement
                     .GetProperty("candidates")[0]
                     .GetProperty("content")

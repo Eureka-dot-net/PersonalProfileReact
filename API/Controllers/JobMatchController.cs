@@ -9,6 +9,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<JobMatchDto>> Post([FromBody] string jobDescription)
         {
+
             if (string.IsNullOrWhiteSpace(jobDescription))
                 return BadRequest("Job description cannot be empty.");
 

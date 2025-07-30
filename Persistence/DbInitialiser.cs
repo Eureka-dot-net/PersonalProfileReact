@@ -264,6 +264,76 @@ namespace Persistence
                 context.Projects.AddRange(projects);
             }
 
+            if (!context.PromptTemplates.Any())
+            {
+                var promptTemplate = new PromptTemplate
+                {
+                    Name = "Job Match Evaluation and Tailored CV Generation",
+                    Description = "Evaluates how well a candidate matches a software developer job description and generates a tailored CV.",
+                    Template = """
+                        You are an AI assistant that evaluates how well a candidate matches a software developer job description and creates a tailored CV for that role.
+
+                        Please analyze the candidate's experience and skills listed below, and determine how closely they align with the requirements of the job.
+
+                        When exact matches are not found, favorably highlight similar or transferable skills and experience. Focus on how the candidate could still be a strong fit for the role, even if there are gaps.
+
+                        The candidate has the following experience:
+                        {{experienceSummary}}
+
+                        Additionally, the candidate is actively working on several personal projects and taking courses to fill any skill gaps.
+
+                        And the following skills:
+                        {{skillsSummary}}
+
+                        They are also working on the following projects:
+                        {{projectsSummary}}
+
+                        The job description is:
+                        ---
+                        {{jobDescription}}
+                        ---
+
+                        Please respond with a single JSON object containing two main sections: "matchEvaluation" and "tailoredCv".
+
+                        1.  **"matchEvaluation"**:
+                            * "matchPercentage": number (0-100)
+                            * "explanation": "text" (Keep explanation under 250 words. Use \n for line breaks. Avoid markdown formatting, bullet points, or code blocks. Structure with clear paragraphs separated by \n\n. Highlight key points concisely.)
+
+                        2.  **"tailoredCv"**: Generate the content for a CV, specifically tailored to the above job description, focusing on highlighting the candidate's most relevant experiences, skills, and projects based on the job requirements.
+                            * "name": "CANDIDATE_NAME" (please use placeholder as it will be replaced later)
+                            * "contactInfo": "CANDIDATE_EMAIL | CANDIDATE_PHONE | CANDIDATE_GITHUB_URL | CANDIDATE_PORTFOLIO_URL"  (please use placeholders as it will be replaced later)
+                            * "summary": "A concise summary (3-5 sentences) tailored to the job, highlighting key strengths and fit."
+                            * "experience": [
+                                    {
+                                        "title": "Job Title",
+                                        "company": "Company Name",
+                                        "dates": "Start Date – End Date",
+                                        "description": "2-3 bullet points, each focusing on achievements relevant to the job description, using action verbs."
+                                    }
+                                    // ... more experience entries ...
+                                ]
+                            * "projects": [
+                                    {
+                                        "name": "Project Name",
+                                        "description": "1-2 sentences describing the project and its relevance to the job description, highlighting technologies used."
+                                    }
+                                    // ... more project entries ...
+                                ]
+                            * "skills": {
+                                    "programmingLanguages": "Comma-separated list of relevant languages, prioritizing those in JD.",
+                                    "frameworksLibraries": "Comma-separated list of relevant frameworks/libraries, prioritizing those in JD.",
+                                    "toolsPlatforms": "Comma-separated list of relevant tools/platforms, prioritizing those in JD.",
+                                    "softSkills": "Comma-separated list of relevant soft skills, if applicable to JD."
+                                }
+
+    Ensure all sections under "tailoredCv" are populated based on the provided candidate data and the job description, emphasizing relevance. If a section is not applicable, ensure it's still present but can be empty or indicate "N/A".
+    """,
+                    CreatedAt = DateTime.UtcNow
+                };
+                context.PromptTemplates.Add(promptTemplate);
+            }
+
+
             context.SaveChanges();
         }
     }
