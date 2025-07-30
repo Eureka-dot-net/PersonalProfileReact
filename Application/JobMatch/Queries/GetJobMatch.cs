@@ -66,6 +66,13 @@ namespace Application.JobMatch.Queries
 
                 var jobMatchResult = await geminiService.GetJobMatchScoreAsync(request.JobDescription, experiences, skills, projects, prompt, cancellationToken);
 
+                jobMatchResult.TailoredCv.Name = "Narike Avenant";
+                jobMatchResult.TailoredCv.Email = "narike@gmail.com";
+                jobMatchResult.TailoredCv.Phone = "0512278249";
+                jobMatchResult.TailoredCv.LinkedIn = "https://www.linkedin.com/in/narike-avenant-65008037/";
+                jobMatchResult.TailoredCv.GitHub = "https://github.com/Eureka-dot-net";
+                jobMatchResult.TailoredCv.PersonalWebsite = "https://narike-personalprofile.azurewebsites.net/";
+
                 var tailoredCvBytes = await builder.GenerateDoc(jobMatchResult.TailoredCv, cancellationToken);
 
                 var fileDto = new FileDto

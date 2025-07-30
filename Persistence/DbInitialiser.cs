@@ -211,7 +211,7 @@ namespace Persistence
                     {
                         Name = "Personal Profile Website",
                         Description = "A React + .NET app built to showcase my skill using react, C#.net and clean architecture.",
-                        GitHubRepo = "https://github.com/Eureka-dot-net/Reactivities",
+                        GitHubRepo = "https://github.com/Eureka-dot-net/PersonalProfileReact",
                         Url = "https://narike-personalprofile.azurewebsites.net/",
                         IsInProgress = false
                     },
@@ -315,7 +315,10 @@ namespace Persistence
               },
               "tailoredCv": {
                 "name": "CANDIDATE_NAME",
-                "contactInfo": "CANDIDATE_EMAIL | CANDIDATE_PHONE | CANDIDATE_LINKEDIN_URL | CANDIDATE_PORTFOLIO_URL",
+                "email": "CANDIDATE_EMAIL",
+                "phone: "CANDIDATE_PHONE",
+                "personalWebsite": "CANDIDATE_PORTFOLIO_URL",
+                "github": "CANDIDATE_GITHUB_URL",
                 "summary": "Tailored personal summary based on job description",
                 "experience": [
                   {

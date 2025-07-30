@@ -7,7 +7,7 @@ namespace API.Controllers
     public class JobMatchController : BaseApiController
     {
         [HttpPost]
-        public async Task<ActionResult<JobMatchDto>> Post([FromBody] string jobDescription)
+        public async Task<ActionResult<JobMatchResponseDto>> Post([FromBody] string jobDescription)
         {
 
             if (string.IsNullOrWhiteSpace(jobDescription))

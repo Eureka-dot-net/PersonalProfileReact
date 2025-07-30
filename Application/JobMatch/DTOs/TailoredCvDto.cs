@@ -11,7 +11,15 @@ namespace Application.JobMatch.DTOs
     public class TailoredCvDto
     {
         public string Name { get; set; } = "CANDIDATE_NAME";
-        public string ContactInfo { get; set; } = "CANDIDATE_EMAIL | CANDIDATE_PHONE | CANDIDATE_LINKEDIN_URL | CANDIDATE_PORTFOLIO_URL";
+        public string Email { get; set; } = "CANDIDATE_EMAIL";
+
+        public string Phone { get; set; } = "CANDIDATE_PHONE";
+
+        public string LinkedIn { get; set; } = "CANDIDATE_LINKEDIN";
+
+        public string GitHub { get; set; } = "CANDIDATE_GITHUB";
+
+        public string PersonalWebsite { get; set; } = "CANDIDATE_PORTFOLIO_URL";
         public string Summary { get; set; } = string.Empty;
 
         public List<Domain.Experience> Experience { get; set; } = new();
