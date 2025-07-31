@@ -1,5 +1,5 @@
 // src/components/JobMatchPage.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Container,
@@ -79,6 +79,44 @@ export const JobMatchPage: React.FC = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  {/* Functionality to show update on analise button */ }
+  const statusMessages = [
+    "Analyzing your CV...",
+    "Comparing skills to job description...",
+    "Checking experience match...",
+    "Scoring compatibility...",
+    "Almost done..."
+  ];
+
+  const [statusMessageIndex, setStatusMessageIndex] = useState(0);
+  const statusIntervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isPending) {
+      // Reset and start cycling messages
+      setStatusMessageIndex(0);
+      statusIntervalRef.current = setInterval(() => {
+        setStatusMessageIndex(prev => {
+          return (prev + 1) % statusMessages.length;
+        });
+      }, 2000); // Change message every 2 seconds
+    } else {
+      // Cleanup when no longer pending
+      if (statusIntervalRef.current) {
+        clearInterval(statusIntervalRef.current);
+        statusIntervalRef.current = null;
+      }
+      setStatusMessageIndex(0); // Reset for next time
+    }
+
+    // Cleanup when component unmounts
+    return () => {
+      if (statusIntervalRef.current) {
+        clearInterval(statusIntervalRef.current);
+      }
+    };
+  }, [isPending, statusMessages.length]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 2, px: { xs: 2, sm: 3 } }}>
@@ -245,8 +283,14 @@ export const JobMatchPage: React.FC = () => {
                   }}
                   size="large"
                 >
-                  {isPending ? 'Analyzing...' : 'Analyze Match'}
+                  {isPending ? 'Analyzing' : 'Analyze Match'}
                 </Button>
+                {isPending && (
+                  <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary', fontStyle: 'italic' }}>
+                    {statusMessages[statusMessageIndex]}
+                  </Typography>
+                )}
+
               </Box>
             </Box>
           </Paper>
@@ -288,32 +332,32 @@ export const JobMatchPage: React.FC = () => {
                 }}
               >
                 <Box display="flex" justifyContent="space-between" alignItems="center" mt={4} mb={2}>
-                <Typography
-                  variant="h5"
-                  component="h2"
-                  sx={{
-                    fontWeight: 700,
-                    color: 'text.primary',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
-                    mb: 1.5
-                  }}
-                >
-                  
-                  <TrendingUpIcon />
-                  Match Analysis Results
-                </Typography>
-                {result.tailoredCv?.fileName && (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => downloadTailoredCv(result.tailoredCv)}
-                    sx={{ borderRadius: 2 }}
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      fontWeight: 700,
+                      color: 'text.primary',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      mb: 1.5
+                    }}
                   >
-                    Download CV
-                  </Button>
-                )}
+
+                    <TrendingUpIcon />
+                    Match Analysis Results
+                  </Typography>
+                  {result.tailoredCv?.fileName && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => downloadTailoredCv(result.tailoredCv)}
+                      sx={{ borderRadius: 2 }}
+                    >
+                      Download CV
+                    </Button>
+                  )}
                 </Box>
                 {/* Quota Warning */}
                 {result.isQuotaExceeded && (

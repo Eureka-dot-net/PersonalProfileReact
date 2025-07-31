@@ -34,7 +34,7 @@ builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfiles>());
 
 builder.Services.AddHttpClient<IGeminiService, GeminiService>();
 
-builder.Services.AddScoped<ICvFileBuilder, CvFileBuilder>();
+builder.Services.AddScoped<ICvFileBuilder, ClaudeDocumentService>();
 
 var app = builder.Build();
 
