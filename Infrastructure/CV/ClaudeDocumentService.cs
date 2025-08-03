@@ -113,14 +113,21 @@ namespace Infrastructure.CV
             var table = new Table();
             var tableProps = new TableProperties();
             tableProps.Append(new TableWidth() { Width = "5000", Type = TableWidthUnitValues.Pct });
+            tableProps.Append(new TableLayout() { Type = TableLayoutValues.Fixed });
             tableProps.Append(new TableBorders(
-                new TopBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
-                new BottomBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
-                new LeftBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
-                new RightBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
-                new InsideHorizontalBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
-                new InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) }
+                new DocumentFormat.OpenXml.Wordprocessing.TopBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
+                new DocumentFormat.OpenXml.Wordprocessing.BottomBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
+                new DocumentFormat.OpenXml.Wordprocessing.LeftBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
+                new DocumentFormat.OpenXml.Wordprocessing.RightBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
+                new DocumentFormat.OpenXml.Wordprocessing.InsideHorizontalBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) },
+                new DocumentFormat.OpenXml.Wordprocessing.InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.None) }
             ));
+
+            // Add table grid to define column widths
+            var tableGrid = new TableGrid();
+            tableGrid.Append(new GridColumn() { Width = "7200" }); // 5 inches for contact info
+            tableGrid.Append(new GridColumn() { Width = "1440" }); // 1 inch for QR code
+            table.Append(tableGrid);
             table.Append(tableProps);
 
             var row = new TableRow();
@@ -128,8 +135,15 @@ namespace Infrastructure.CV
             // Left cell - Contact info
             var leftCell = new TableCell();
             var leftCellProps = new TableCellProperties();
-            leftCellProps.Append(new TableCellWidth() { Width = "4000", Type = TableWidthUnitValues.Pct });
-            leftCellProps.Append(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center });
+            leftCellProps.Append(new TableCellWidth() { Width = "7200", Type = TableWidthUnitValues.Dxa });
+            leftCellProps.Append(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Top });
+            leftCellProps.Append(new TableCellMargin()
+            {
+                TopMargin = new TopMargin() { Width = "0", Type = TableWidthUnitValues.Dxa },
+                BottomMargin = new BottomMargin() { Width = "0", Type = TableWidthUnitValues.Dxa },
+                LeftMargin = new LeftMargin() { Width = "0", Type = TableWidthUnitValues.Dxa },
+                RightMargin = new RightMargin() { Width = "120", Type = TableWidthUnitValues.Dxa }
+            });
             leftCell.Append(leftCellProps);
 
             // Add contact details
@@ -138,8 +152,15 @@ namespace Infrastructure.CV
             // Right cell - QR code (if personal website exists)
             var rightCell = new TableCell();
             var rightCellProps = new TableCellProperties();
-            rightCellProps.Append(new TableCellWidth() { Width = "1000", Type = TableWidthUnitValues.Pct });
-            rightCellProps.Append(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center });
+            rightCellProps.Append(new TableCellWidth() { Width = "1440", Type = TableWidthUnitValues.Dxa });
+            rightCellProps.Append(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Top });
+            rightCellProps.Append(new TableCellMargin()
+            {
+                TopMargin = new TopMargin() { Width = "0", Type = TableWidthUnitValues.Dxa },
+                BottomMargin = new BottomMargin() { Width = "0", Type = TableWidthUnitValues.Dxa },
+                LeftMargin = new LeftMargin() { Width = "0", Type = TableWidthUnitValues.Dxa },
+                RightMargin = new RightMargin() { Width = "0", Type = TableWidthUnitValues.Dxa }
+            });
             rightCell.Append(rightCellProps);
 
             if (!string.IsNullOrWhiteSpace(cv.PersonalWebsite))
@@ -160,15 +181,15 @@ namespace Infrastructure.CV
             var contactItems = new List<(string label, string value, bool isLink)>();
 
             if (!string.IsNullOrWhiteSpace(cv.Email))
-                contactItems.Add(("Email: ", cv.Email, true));
+                contactItems.Add(("Email:", cv.Email, true));
             if (!string.IsNullOrWhiteSpace(cv.Phone))
-                contactItems.Add(("Phone: ", cv.Phone, false));
+                contactItems.Add(("Phone:", cv.Phone, false));
             if (!string.IsNullOrWhiteSpace(cv.LinkedIn))
-                contactItems.Add(("LinkedIn: ", cv.LinkedIn, true));
+                contactItems.Add(("LinkedIn:", cv.LinkedIn, true));
             if (!string.IsNullOrWhiteSpace(cv.GitHub))
-                contactItems.Add(("GitHub: ", cv.GitHub, true));
+                contactItems.Add(("GitHub:", cv.GitHub, true));
             if (!string.IsNullOrWhiteSpace(cv.PersonalWebsite))
-                contactItems.Add(("Portfolio: ", cv.PersonalWebsite, true));
+                contactItems.Add(("Portfolio:", cv.PersonalWebsite, true));
 
             foreach (var (label, value, isLink) in contactItems)
             {
@@ -183,7 +204,7 @@ namespace Infrastructure.CV
                 labelRunProps.Append(new Bold());
                 labelRunProps.Append(new FontSize() { Val = "18" });
                 labelRun.Append(labelRunProps);
-                labelRun.Append(new Text(label + " ") { Space = SpaceProcessingModeValues.Preserve });
+                labelRun.Append(new Text(label + " "));
                 para.Append(labelRun);
 
                 // Value
