@@ -176,7 +176,7 @@ namespace Persistence
                         Skills = new List<Skill>
                         {
                             new Skill { Name = "MSBuild" },
-                            new Skill { Name = "Behavior-Driven Development (Pester)" }
+                            new Skill { Name = "Behavior-Driven Development (Pester)" },
                              new Skill { Name = "REST API" }
                         }
                     },
