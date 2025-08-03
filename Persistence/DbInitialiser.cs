@@ -53,8 +53,8 @@ namespace Persistence
                         Title = "DevOps Consultant",
                         Company = "ALM Online",
                         Location = "UK / Remote",
-                        StartDate = new DateTime(2018, 1, 1),
-                        EndDate = new DateTime(2025, 1, 1),
+                        StartDate = new DateTime(2018, 2, 1),
+                        EndDate = null,
                         Highlights = new List<string>
                         {
                             "Designed and refined CI/CD pipelines in Azure DevOps, improving deployment efficiency by 25%.",
@@ -69,8 +69,8 @@ namespace Persistence
                         Title = "ALM Solutions Manager",
                         Company = "AXA Personal Lines",
                         Location = "Surrey, UK",
-                        StartDate = new DateTime(2016, 1, 1),
-                        EndDate = new DateTime(2018, 1, 1),
+                        StartDate = new DateTime(2016, 9, 1),
+                        EndDate = new DateTime(2018, 2, 1),
                         Highlights = new List<string>
                         {
                             "Led the shift from TFS to Azure DevOps, managing Git strategies, permission models, and build pipelines.",
@@ -83,8 +83,8 @@ namespace Persistence
                         Title = "ALM Engineer / Configuration Manager",
                         Company = "AXA Personal Lines",
                         Location = "Surrey, UK",
-                        StartDate = new DateTime(2014, 1, 1),
-                        EndDate = new DateTime(2016, 1, 1),
+                        StartDate = new DateTime(2014, 11, 1),
+                        EndDate = new DateTime(2016, 9, 1),
                         Highlights = new List<string>
                         {
                             "Oversaw build, source control, and automated deployments for the AXA website ecosystem.",
@@ -97,8 +97,8 @@ namespace Persistence
                         Title = "Developer",
                         Company = "AXA Personal Lines",
                         Location = "Surrey, UK",
-                        StartDate = new DateTime(2009, 1, 1),
-                        EndDate = new DateTime(2014, 1, 1),
+                        StartDate = new DateTime(2009, 7, 1),
+                        EndDate = new DateTime(2014, 11, 1),
                         Highlights = new List<string>
                         {
                             "Developed features for the AXA and Swiftcover websites using C#.NET, JavaScript, HTML, and SQL.",
@@ -111,7 +111,7 @@ namespace Persistence
                         Company = "IT Energy Systems & Consulting",
                         Location = "London, UK",
                         StartDate = new DateTime(2006, 2, 1),
-                        EndDate = new DateTime(2008, 3, 1),
+                        EndDate = new DateTime(2008, 7, 1),
                         Highlights = new List<string>
                         {
                             "Collaborated on design, development and support of custom websites and client‑facing applications.",
@@ -139,10 +139,12 @@ namespace Persistence
                             new Skill { Name = "C#.NET" },
                             new Skill { Name = "SQL" },
                             new Skill { Name = "JavaScript" },
+                            new Skill { Name = "Typescript" },
+                            new Skill { Name = "Node.js / Express.js" },
                             new Skill { Name = "HTML" },
                             new Skill { Name = "CSS" },
-                            new Skill { Name = "Typescript" },
                             new Skill { Name = "React" },
+                            
                         }
                     },
                     new SkillCategory
@@ -175,6 +177,7 @@ namespace Persistence
                         {
                             new Skill { Name = "MSBuild" },
                             new Skill { Name = "Behavior-Driven Development (Pester)" }
+                             new Skill { Name = "REST API" }
                         }
                     },
                     new SkillCategory
@@ -210,10 +213,11 @@ namespace Persistence
                     new Project
                     {
                         Name = "Personal Profile Website",
-                        Description = "A React + .NET app built to showcase my skill using react, C#.net and clean architecture.",
+                        Description = $"A React, .NET & Node.js app built to showcase my skill using react, C#.net and clean architecture. " +
+                            $"It includes JobMatch functionality that gives a match to a specified job spec using Gemini API. It also generates a CV specific for the job spec",
                         GitHubRepo = "https://github.com/Eureka-dot-net/PersonalProfileReact",
                         Url = "https://narike-personalprofile.azurewebsites.net/",
-                        IsInProgress = false
+                        IsInProgress = true
                     },
                     new Project
                     {
@@ -226,7 +230,7 @@ namespace Persistence
                     new Project
                     {
                         Name = "NPC Info (Stardew Valley Mod)",
-                        Description = "Mod that displays helpful icons for NPCs—like birthdays, gifts, and more.",
+                        Description = "Mod that displays helpful icons for NPCs—like birthdays, gifts, and more. Written in C#.net",
                         GitHubRepo = "https://github.com/Eureka-dot-net/NPCInfo",
                         Url = "https://www.nexusmods.com/stardewvalley/mods/28947",
                         IsInProgress = false,
@@ -248,7 +252,7 @@ namespace Persistence
                     },
                     new Project
                     {
-                        Name = "Game Automation Scripts",
+                        Name = "Game Automation Scripts written in C#.net using multithreading to run multiple instances at once",
                         Description = "Scripts and tools that automate repetitive gameplay tasks across different games.",
                         IsInProgress = false
                     },
