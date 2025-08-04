@@ -29,7 +29,8 @@ import { useJobMatch, type FileDto, type JobMatchDto } from '../lib/hooks/useJob
 export const JobMatchPage: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [result, setResult] = useState<JobMatchDto | null>(null);
-  const { mutate: analyzeMatch, isPending, isError } = useJobMatch();
+  const [errorDetails, setErrorDetails] = useState<Error | null>(null);
+  const { mutate: analyzeMatch, isPending } = useJobMatch();
   const theme = useTheme();
 
   const MAX_CHARACTERS = 2500;
@@ -45,6 +46,7 @@ export const JobMatchPage: React.FC = () => {
       },
       onError: (error) => {
         console.error('Job match analysis failed:', error);
+        setErrorDetails(error);
       }
     });
   };
@@ -297,15 +299,18 @@ export const JobMatchPage: React.FC = () => {
         </Grid>
 
         {/* Error State */}
-        {isError && (
+        {errorDetails && (
           <Grid size={12}>
             <Alert
               severity="error"
               icon={<ErrorIcon />}
               sx={{ borderRadius: 2 }}
             >
-              <Typography variant="body1">
+              <Typography variant="body1" gutterBottom>
                 Failed to analyze job match. Please try again.
+              </Typography>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                {JSON.stringify(errorDetails, Object.getOwnPropertyNames(errorDetails), 2)}
               </Typography>
             </Alert>
           </Grid>
