@@ -334,8 +334,8 @@ Structure to return (JSON):
         "title": "Job Title",
         "company": "Company Name",
         "location": "City / Remote",
-        "startDate": "yyyy-mm-dd",
-        "endDate": "yyyy-mm-dd or today's date if current",
+        "startDate": "yyyy-mm-dd", (ALWAYS use two digits for month and day, e.g., 2023-01-05 and ALWAYS return a valid date)
+        "endDate": "yyyy-mm-dd or today's date if current", (ALWAYS use two digits for month and day, e.g., 2023-01-05 and ALWAYS return a valid date)
         "highlights": [
           "Achievement 1",
           "Achievement 2"

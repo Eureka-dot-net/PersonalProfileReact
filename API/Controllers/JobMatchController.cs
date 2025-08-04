@@ -15,8 +15,8 @@ namespace API.Controllers
 
             var result = await Mediator.Send(new GetJobMatch.Query(jobDescription));
 
-            if (!result.IsSuccess)
-                return BadRequest(result.ErrorMessage);
+            //if (!result.IsSuccess)
+            //    return BadRequest(result);
 
             return Ok(result);
         }
