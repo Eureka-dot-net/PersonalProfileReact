@@ -237,7 +237,7 @@ namespace Infrastructure.Services
 
                 using var json = JsonDocument.Parse(responseText);
 
-                // Your existing JSON parsing logic
+               
                 var rawText = json.RootElement
                     .GetProperty("candidates")[0]
                     .GetProperty("content")

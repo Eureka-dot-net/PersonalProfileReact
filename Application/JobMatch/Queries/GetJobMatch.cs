@@ -55,7 +55,7 @@ namespace Application.JobMatch.Queries
 
                 var promptResult = await mediator.Send(new GetLatestPromptTemplate.Query(), cancellationToken);
 
-                if (!promptResult.IsSuccess)
+                if (!promptResult.IsSuccess )
                     return new JobMatchResponseDto
                     {
                         IsSuccess = false,
@@ -65,6 +65,14 @@ namespace Application.JobMatch.Queries
                 var prompt = promptResult.Value!.Template!;
 
                 var jobMatchResult = await geminiService.GetJobMatchScoreAsync(request.JobDescription, experiences, skills, projects, prompt, cancellationToken);
+
+                if (!jobMatchResult.IsSuccess) return new JobMatchResponseDto
+                {
+                    IsSuccess = false,
+                    IsQuotaExceeded = jobMatchResult.IsQuotaExceeded,
+                    RetryAfter = jobMatchResult.RetryAfter,
+                    ErrorMessage = "Could not get prompt result: " + (jobMatchResult.ErrorMessage ?? "Unknown error")
+                };
 
                 jobMatchResult.TailoredCv.Name = "Narike Avenant";
                 jobMatchResult.TailoredCv.Email = "narike@gmail.com";
