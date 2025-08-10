@@ -355,15 +355,15 @@ namespace Persistence
                             "skills": [
                               {
                                 "category": "Programming Languages",
-                                "skills": ["C#", "Python", "JavaScript"]
+                                "skills": ["C#", "Python", "JavaScript", (.."etc")]
                               },
                               {
                                 "category": "Frameworks and Libraries",
-                                "skills": [".NET", "React", "Entity Framework"]
+                                "skills": [".NET", "React", "Entity Framework", (.."etc")]
                               },
                               {
                                 "category": "Soft Skills",
-                                "skills": ["Communication", "Problem Solving"]
+                                "skills": ["Communication", "Problem Solving",  (.."etc")]
                               },
                               {
                                 "category": "(any other categories explicitly present in the candidate's profile but not yet listed here)",
