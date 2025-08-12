@@ -1,10 +1,10 @@
-import { AboutPage } from "../../features/AboutPage";
-import { ExperiencePage } from "../../features/ExperiencePage";
+import { AboutPage } from "../../features/About/AboutPage";
+import { ExperiencePage } from "../../features/Experience/ExperiencePage";
 import { createBrowserRouter } from  "react-router-dom";
 import App from "../layout/App";
-import { SkillsPage } from "../../features/SkillsPage";
-import { ProjectPage } from "../../features/ProjectPage";
-import { JobMatchPage } from "../../features/JobMatchPage";
+import { SkillsPage } from "../../features/Skills/SkillsPage";
+import { ProjectPage } from "../../features/Project/ProjectPage";
+import { JobMatchPage } from "../../features/JobMatch/JobMatchPage";
 
 export const router = createBrowserRouter([
   {

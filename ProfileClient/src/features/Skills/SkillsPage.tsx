@@ -1,6 +1,6 @@
-// src/components/SkillsPage.tsx
+// src/components/Skills/SkillsPage.tsx
 import React from 'react';
-import { useSkills } from '../lib/hooks/useSkills';
+import { useSkills } from '../../lib/hooks/useSkills';
 import {
   Box,
   Container,

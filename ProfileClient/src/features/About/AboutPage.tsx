@@ -1,6 +1,6 @@
-// src/components/AboutPage.tsx
+// src/components/About/AboutPage.tsx
 import React from 'react';
-import { useAbout } from '../lib/hooks/useAbout';
+import { useAbout } from '../../lib/hooks/useAbout';
 import {
   Box,
   Container,

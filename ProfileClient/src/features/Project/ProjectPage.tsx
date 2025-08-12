@@ -1,4 +1,4 @@
-// src/components/ProjectPage.tsx
+// src/components/Project/ProjectPage.tsx
 import React, { useState } from 'react';
 import {
     Box,
@@ -24,7 +24,7 @@ import {
     Build as BuildIcon,
     Close as CloseIcon,
 } from '@mui/icons-material';
-import { useProjects } from '../lib/hooks/useProject';
+import { useProjects } from '../../lib/hooks/useProject';
 
 export const ProjectPage: React.FC = () => {
     const { projects, isLoading, isError } = useProjects();
