@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { SkillCategoryCard } from './SkillCategoryCard';
-import type { SkillCategory } from '../../lib/hooks/useSkills';
 
 interface SkillCategoryListProps {
   skills: SkillCategory[];

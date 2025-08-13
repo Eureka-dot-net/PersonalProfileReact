@@ -7,7 +7,6 @@ import {
 } from '@mui/material';
 import { getCategoryIcon } from '../../utils/skillUtils';
 import { SkillChipList } from './SkillChipList';
-import type { SkillCategory } from '../../lib/hooks/useSkills';
 
 interface SkillCategoryCardProps {
   skillCategory: SkillCategory;
