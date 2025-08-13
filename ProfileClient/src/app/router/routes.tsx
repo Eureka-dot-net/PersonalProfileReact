@@ -3,7 +3,7 @@ import { ExperiencePage } from "../../features/Experience/ExperiencePage";
 import { createBrowserRouter } from  "react-router-dom";
 import App from "../layout/App";
 import { SkillsPage } from "../../features/Skills/SkillsPage";
-import { ProjectPage } from "../../features/Project/ProjectPage";
+import { ProjectPage } from "../../features/Projects/ProjectPage";
 import { JobMatchPage } from "../../features/JobMatch/JobMatchPage";
 
 export const router = createBrowserRouter([
