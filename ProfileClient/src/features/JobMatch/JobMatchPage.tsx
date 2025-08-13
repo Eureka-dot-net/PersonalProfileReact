@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Container, Grid } from '@mui/material';
 import { useJobMatch, type JobMatchDto } from '../../lib/hooks/useJobMatch';
 import { useStatusMessages } from '../../lib/hooks/useStatusMessages';
 import { downloadTailoredCv } from '../../utils/fileDownload';
@@ -8,6 +7,7 @@ import { JobDescriptionInput } from './JobDescriptionInput';
 import { MatchResults } from './MatchResults';
 import { JobMatchEmptyState } from './JobMatchEmptyState';
 import { ErrorDisplay } from './ErrorDisplay';
+import { Grid } from '@mui/material';
 
 export const JobMatchPage: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
