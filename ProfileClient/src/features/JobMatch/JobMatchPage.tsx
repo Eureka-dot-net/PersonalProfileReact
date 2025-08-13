@@ -34,7 +34,6 @@ export const JobMatchPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 2, px: { xs: 2, sm: 3 } }}>
       <Grid container spacing={2}>
         {/* Header Section */}
         <Grid size={12}>
@@ -73,6 +72,5 @@ export const JobMatchPage: React.FC = () => {
           </Grid>
         )}
       </Grid>
-    </Container>
   );
 };
