@@ -35,9 +35,9 @@ namespace Persistence
                         En = "Netanya, Israel",
                         He = ""
                     },
-                    Email = "your@email.com",
-                    GitHub = "https://github.com/yourusername",
-                    LinkedIn = "https://www.linkedin.com/in/yourprofile",
+                    Email = "narike@email.com",
+                    GitHub = "https://github.com/Eureka-dot-net",
+                    LinkedIn = "https://www.linkedin.com/in/narike-avenant-65008037/",
                     ProfilePictureUrl = "/images/profile.jpg"
                 };
 
