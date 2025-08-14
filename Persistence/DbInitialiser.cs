@@ -380,6 +380,81 @@ namespace Persistence
 
                 context.PromptTemplates.Add(promptTemplate);
             }
+
+            // Add sample JobMatch data for testing
+            if (!context.JobMatches.Any())
+            {
+                var jobMatches = new List<Domain.JobMatch>
+                {
+                    new Domain.JobMatch
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = Guid.Empty,
+                        JobTitle = "Senior .NET Developer",
+                        Company = "TechCorp Inc.",
+                        MatchPercentage = 92.5m,
+                        JobDescription = "Looking for an experienced .NET developer with Azure DevOps experience...",
+                        Salary = "£60,000 - £80,000",
+                        Location = "London, UK",
+                        MatchedDate = DateTime.UtcNow.AddDays(-5),
+                        Status = "New",
+                        JobUrl = "https://example.com/job/1",
+                        CreatedAt = DateTime.UtcNow.AddDays(-5),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-5)
+                    },
+                    new Domain.JobMatch
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = Guid.Empty,
+                        JobTitle = "DevOps Engineer",
+                        Company = "CloudSolutions Ltd",
+                        MatchPercentage = 88.0m,
+                        JobDescription = "Seeking a DevOps engineer with Azure and CI/CD pipeline experience...",
+                        Salary = "£55,000 - £75,000",
+                        Location = "Remote",
+                        MatchedDate = DateTime.UtcNow.AddDays(-10),
+                        Status = "Viewed",
+                        JobUrl = "https://example.com/job/2",
+                        CreatedAt = DateTime.UtcNow.AddDays(-10),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-8)
+                    },
+                    new Domain.JobMatch
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = Guid.Empty,
+                        JobTitle = "Full Stack Developer",
+                        Company = "StartupXYZ",
+                        MatchPercentage = 75.5m,
+                        JobDescription = "React and .NET developer needed for exciting startup...",
+                        Salary = "£45,000 - £65,000",
+                        Location = "Manchester, UK",
+                        MatchedDate = DateTime.UtcNow.AddDays(-15),
+                        Status = "Applied",
+                        JobUrl = "https://example.com/job/3",
+                        CreatedAt = DateTime.UtcNow.AddDays(-15),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-12)
+                    },
+                    new Domain.JobMatch
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = Guid.Empty,
+                        JobTitle = "React Developer",
+                        Company = "Frontend Masters",
+                        MatchPercentage = 68.0m,
+                        JobDescription = "Frontend React developer with TypeScript skills...",
+                        Salary = "£40,000 - £55,000",
+                        Location = "Birmingham, UK",
+                        MatchedDate = DateTime.UtcNow.AddDays(-20),
+                        Status = "New",
+                        JobUrl = "https://example.com/job/4",
+                        CreatedAt = DateTime.UtcNow.AddDays(-20),
+                        UpdatedAt = DateTime.UtcNow.AddDays(-20)
+                    }
+                };
+
+                context.JobMatches.AddRange(jobMatches);
+            }
+
             context.SaveChanges();
         }
     }
