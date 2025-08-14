@@ -455,7 +455,7 @@ namespace Persistence
                 context.JobMatches.AddRange(jobMatches);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }

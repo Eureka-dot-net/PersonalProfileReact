@@ -61,9 +61,20 @@ app.MapFallbackToController("Index", "Fallback");
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-// For development, recreate the database
-await db.Database.EnsureDeletedAsync();
-await db.Database.EnsureCreatedAsync();
+// For test scenarios or when connection string suggests in-memory database, recreate database
+var connectionString = db.Database.GetConnectionString();
+if (app.Environment.IsEnvironment("Testing") || 
+    connectionString?.Contains(":memory:") == true || 
+    connectionString?.Contains("DataSource=:memory:") == true)
+{
+    await db.Database.EnsureDeletedAsync();
+    await db.Database.EnsureCreatedAsync();
+}
+else
+{
+    // Use migrations instead of recreating the database
+    await db.Database.MigrateAsync();
+}
 
 await DbInitialiser.SeedData(db);
 
