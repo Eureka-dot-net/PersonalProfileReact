@@ -13,6 +13,7 @@ namespace Application.JobMatch.DTOs
         public string? RetryAfter { get; set; }
         public string? ErrorMessage { get; set; }
 
+        public JobInformationDto JobInformation { get; set; } = new();
         public MatchEvaluationDto MatchEvaluation { get; set; } = new();
         public TailoredCvDto TailoredCv { get; set; } = new();
     }

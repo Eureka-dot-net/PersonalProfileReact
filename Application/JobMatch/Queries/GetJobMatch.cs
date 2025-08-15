@@ -1,5 +1,6 @@
 ﻿using Application.Experience.Queriess;
 using Application.Interfaces;
+using Application.JobMatch.Commands;
 using Application.JobMatch.DTOs;
 using Application.Projects.Queries;
 using Application.PromptTemplate.Queries;
@@ -93,9 +94,31 @@ namespace Application.JobMatch.Queries
                 var result = new JobMatchResponseDto
                 {
                     IsSuccess = true,
+                    JobInformation = jobMatchResult.JobInformation,
                     MatchEvaluation = jobMatchResult.MatchEvaluation,
                     TailoredCv = fileDto
                 };
+
+                // Save the job match to the database
+                try
+                {
+                    var saveCommand = new SaveJobMatch.Command(
+                        JobTitle: jobMatchResult.JobInformation.JobTitle,
+                        Company: jobMatchResult.JobInformation.Company,
+                        MatchPercentage: (decimal)jobMatchResult.MatchEvaluation.MatchPercentage,
+                        JobDescription: request.JobDescription,
+                        Requirements: jobMatchResult.JobInformation.Requirements,
+                        Salary: jobMatchResult.JobInformation.Salary,
+                        Location: jobMatchResult.JobInformation.Location
+                    );
+
+                    await mediator.Send(saveCommand, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    // Log the error but don't fail the request - user still gets their analysis
+                    Console.WriteLine($"Warning: Failed to save job match to database: {ex.Message}");
+                }
 
                 return result;
 

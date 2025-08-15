@@ -318,6 +318,13 @@ namespace Persistence
 
                         Structure to return (JSON):
                         {
+                          "jobInformation": {
+                            "jobTitle": "Job title extracted from the description",
+                            "company": "Company name extracted from the description",
+                            "salary": "Salary range if mentioned, or null",
+                            "location": "Location if mentioned, or null",
+                            "requirements": "Key requirements extracted as a summary"
+                          },
                           "matchEvaluation": {
                             "matchPercentage": 0–100,
                             "explanation": "A brief summary of how well the candidate fits the role."

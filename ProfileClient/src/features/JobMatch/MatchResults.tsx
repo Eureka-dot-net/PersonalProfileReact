@@ -114,6 +114,60 @@ export const MatchResults: React.FC<MatchResultsProps> = ({ result, onDownloadCv
       {/* Results Body */}
       {result.isSuccess && result.matchEvaluation.matchPercentage !== undefined && (
         <Box sx={{ p: { xs: 2, md: 3 } }}>
+          {/* Job Information */}
+          {result.jobInformation && (result.jobInformation.jobTitle || result.jobInformation.company) && (
+            <>
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{
+                    fontWeight: 600,
+                    color: 'text.primary',
+                    mb: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}
+                >
+                  Job Details
+                </Typography>
+
+                <Paper
+                  elevation={1}
+                  sx={{
+                    p: 2,
+                    bgcolor: 'grey.50',
+                    borderRadius: 2,
+                    border: `1px solid ${theme.palette.divider}`
+                  }}
+                >
+                  {result.jobInformation.jobTitle && (
+                    <Typography variant="body1" sx={{ mb: 1, fontWeight: 600 }}>
+                      {result.jobInformation.jobTitle}
+                    </Typography>
+                  )}
+                  {result.jobInformation.company && (
+                    <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                      Company: {result.jobInformation.company}
+                    </Typography>
+                  )}
+                  {result.jobInformation.location && (
+                    <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                      Location: {result.jobInformation.location}
+                    </Typography>
+                  )}
+                  {result.jobInformation.salary && (
+                    <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>
+                      Salary: {result.jobInformation.salary}
+                    </Typography>
+                  )}
+                </Paper>
+              </Box>
+              <Divider sx={{ mb: 3 }} />
+            </>
+          )}
+
           {/* Match Percentage */}
           <Box sx={{ mb: 3 }}>
             <Box sx={{ 

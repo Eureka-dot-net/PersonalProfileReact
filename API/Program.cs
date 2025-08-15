@@ -61,22 +61,42 @@ app.MapFallbackToController("Index", "Fallback");
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-// For test scenarios or when connection string suggests in-memory database, recreate database
-var connectionString = db.Database.GetConnectionString();
-if (app.Environment.IsEnvironment("Testing") || 
-    connectionString?.Contains(":memory:") == true || 
-    connectionString?.Contains("DataSource=:memory:") == true)
+try
 {
-    await db.Database.EnsureDeletedAsync();
-    await db.Database.EnsureCreatedAsync();
-}
-else
-{
-    // Use migrations instead of recreating the database
-    await db.Database.MigrateAsync();
-}
+    // For test scenarios or when connection string suggests in-memory database, recreate database
+    var connectionString = db.Database.GetConnectionString();
+    if (app.Environment.IsEnvironment("Testing") || 
+        connectionString?.Contains(":memory:") == true || 
+        connectionString?.Contains("DataSource=:memory:") == true)
+    {
+        await db.Database.EnsureDeletedAsync();
+        await db.Database.EnsureCreatedAsync();
+    }
+    else
+    {
+        // For development, use EnsureCreated for simplicity until migration issues are resolved
+        if (app.Environment.IsDevelopment())
+        {
+            await db.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            // Use migrations in production
+            await db.Database.MigrateAsync();
+        }
+    }
 
-await DbInitialiser.SeedData(db);
+    // Wait a moment to ensure database operations are complete
+    await Task.Delay(100);
+
+    await DbInitialiser.SeedData(db);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error initializing database: {ex.Message}");
+    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+    throw;
+}
 
 app.Run();
 

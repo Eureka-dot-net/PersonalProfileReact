@@ -12,10 +12,19 @@ export interface MatchEvaluationDto {
   explanation: string;
 }
 
+export interface JobInformationDto {
+  jobTitle: string;
+  company: string;
+  salary?: string | null;
+  location?: string | null;
+  requirements?: string | null;
+}
+
 export interface JobMatchDto {
   isSuccess: boolean;
   isQuotaExceeded?: boolean;
   retryAfter?: number | null;
+  jobInformation: JobInformationDto;
   matchEvaluation: MatchEvaluationDto;
   tailoredCv: FileDto;
   errorMessage?: string | null;
