@@ -25,6 +25,8 @@ namespace Persistence
 
         public DbSet<PromptTemplate> PromptTemplates => Set<PromptTemplate>();
 
+        public DbSet<JobMatch> JobMatches => Set<JobMatch>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AboutMe>(entity =>
@@ -46,6 +48,21 @@ namespace Persistence
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
                     v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null)!)
                 .HasColumnType("TEXT");
+
+            modelBuilder.Entity<JobMatch>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.JobTitle).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Company).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.MatchPercentage).HasPrecision(5, 2);
+                entity.Property(e => e.Salary).HasMaxLength(100);
+                entity.Property(e => e.Location).HasMaxLength(200);
+                entity.Property(e => e.Status).HasMaxLength(50).HasDefaultValue("New");
+                entity.Property(e => e.ExternalJobId).HasMaxLength(100);
+                entity.Property(e => e.JobUrl).HasMaxLength(500);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+            });
         }
     }
 }

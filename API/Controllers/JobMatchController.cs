@@ -6,6 +6,17 @@ namespace API.Controllers
 {
     public class JobMatchController : BaseApiController
     {
+        [HttpGet]
+        public async Task<ActionResult<JobMatchListResponseDto>> GetJobMatches([FromQuery] JobMatchFilterDto filter)
+        {
+            var result = await Mediator.Send(new GetJobMatches.Query(filter));
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result.Value);
+        }
+
         [HttpPost]
         public async Task<ActionResult<JobMatchResponseDto>> Post([FromBody] string jobDescription)
         {

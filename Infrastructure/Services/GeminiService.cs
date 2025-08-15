@@ -41,7 +41,7 @@ namespace Infrastructure.Services
             _httpClient = httpClient;
         }
 
-        private async Task<string> BuildPrompt(string jobDescription, List<Experience> experiences, List<SkillGroupDto> skills, List<ProjectDto> projects, string prompt)
+        private string BuildPrompt(string jobDescription, List<Experience> experiences, List<SkillGroupDto> skills, List<ProjectDto> projects, string prompt)
         {
             string experienceSummary = GetExperienceSummary(experiences);
             string skillsSummary = GetSkillSummary(skills);
@@ -156,7 +156,7 @@ namespace Infrastructure.Services
 
         public async Task<JobMatchDto> GetJobMatchScoreAsync(string jobDescription, List<Experience> experiences, List<SkillGroupDto> skills, List<ProjectDto> projects, string prompt, CancellationToken cancellationToken)
         {
-            var requestprompt = await BuildPrompt(jobDescription, experiences, skills, projects, prompt);
+            var requestprompt = BuildPrompt(jobDescription, experiences, skills, projects, prompt);
 
             var requestBody = new
             {

@@ -86,7 +86,7 @@ namespace Infrastructure.CV
                 Gutter = 0
             };
             sectionProps.Append(pageMargin);
-            mainPart.Document.Body.Append(sectionProps);
+            mainPart.Document.Body?.Append(sectionProps);
         }
 
         private void AddHeader(Body body, TailoredCvDto cv, MainDocumentPart mainPart)

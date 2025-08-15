@@ -36,7 +36,7 @@ namespace Infrastructure.CV
                 CreateStyles(mainPart);
 
                 // Add header section with name and contact info (including QR codes)
-                await AddHeaderSectionWithQR(body, mainPart, cv);
+                AddHeaderSectionWithQR(body, mainPart, cv);
 
                 // Add summary section
                 if (!string.IsNullOrWhiteSpace(cv.Summary))
@@ -53,7 +53,7 @@ namespace Infrastructure.CV
                 // Add projects section with QR codes for URLs
                 if (cv.Projects.Any())
                 {
-                    await AddProjectsSectionWithQR(body, mainPart, cv.Projects);
+                    AddProjectsSectionWithQR(body, mainPart, cv.Projects);
                 }
 
                 // Add skills section
@@ -81,7 +81,7 @@ namespace Infrastructure.CV
                     Gutter = 0
                 }
             );
-            mainPart.Document.Body.Append(sectionProps);
+            mainPart.Document.Body?.Append(sectionProps);
         }
 
         private static void CreateStyles(MainDocumentPart mainPart)
@@ -140,7 +140,7 @@ namespace Infrastructure.CV
             return items;
         }
 
-        private static async Task AddHeaderSectionWithQR(W.Body body, MainDocumentPart mainPart, TailoredCvDto cv)
+        private static void AddHeaderSectionWithQR(W.Body body, MainDocumentPart mainPart, TailoredCvDto cv)
         {
             // Name - Large, bold, centered
             var nameParagraph = new W.Paragraph();
@@ -186,14 +186,14 @@ namespace Infrastructure.CV
             // Add URL contact info with QR codes and clickable links
             if (urlItems.Any())
             {
-                await AddContactWithQRCodesAndLinks(body, mainPart, urlItems);
+                AddContactWithQRCodesAndLinks(body, mainPart, urlItems);
             }
 
             // Add separator line
             AddSeparatorLine(body);
         }
 
-        private static async Task AddContactWithQRCodesAndLinks(W.Body body, MainDocumentPart mainPart, List<ContactItem> urlItems)
+        private static void AddContactWithQRCodesAndLinks(W.Body body, MainDocumentPart mainPart, List<ContactItem> urlItems)
         {
             // Create a table for better layout of QR codes and text
             var table = new W.Table();
@@ -227,7 +227,7 @@ namespace Infrastructure.CV
                 cell.Append(cellProps);
 
                 // Add QR code
-                var qrImagePart = await AddQRCodeImage(mainPart, item.Url);
+                var qrImagePart = !string.IsNullOrEmpty(item.Url) ? AddQRCodeImage(mainPart, item.Url) : null;
                 if (qrImagePart != null)
                 {
                     var qrParagraph = new W.Paragraph();
@@ -250,7 +250,7 @@ namespace Infrastructure.CV
                     new W.SpacingBetweenLines() { After = "60" }
                 );
 
-                if (item.Type == ContactType.Email || item.Type == ContactType.Url)
+                if ((item.Type == ContactType.Email || item.Type == ContactType.Url) && !string.IsNullOrEmpty(item.Url))
                 {
                     // Create hyperlink
                     var hyperlinkRel = mainPart.AddHyperlinkRelationship(new Uri(item.Url), true);
@@ -282,7 +282,7 @@ namespace Infrastructure.CV
                 cell.Append(linkParagraph);
 
                 // Add URL text below the link for reference
-                if (item.Type == ContactType.Url)
+                if (item.Type == ContactType.Url && !string.IsNullOrEmpty(item.Url))
                 {
                     var urlParagraph = new W.Paragraph();
                     urlParagraph.ParagraphProperties = new W.ParagraphProperties(
@@ -316,7 +316,7 @@ namespace Infrastructure.CV
             AddSpacing(body, "360");
         }
 
-        private static async Task<ImagePart> AddQRCodeImage(MainDocumentPart mainPart, string url)
+        private static ImagePart? AddQRCodeImage(MainDocumentPart mainPart, string url)
         {
             try
             {
@@ -369,7 +369,7 @@ namespace Infrastructure.CV
             return drawing;
         }
 
-        private static async Task AddProjectsSectionWithQR(W.Body body, MainDocumentPart mainPart, List<ProjectDto> projects)
+        private static void AddProjectsSectionWithQR(W.Body body, MainDocumentPart mainPart, List<ProjectDto> projects)
         {
             AddSectionHeading(body, "Key Projects");
 
@@ -423,7 +423,7 @@ namespace Infrastructure.CV
 
                 if (projectUrls.Any())
                 {
-                    await AddContactWithQRCodesAndLinks(body, mainPart, projectUrls);
+                    AddContactWithQRCodesAndLinks(body, mainPart, projectUrls);
                 }
 
                 AddSpacing(body, "180");

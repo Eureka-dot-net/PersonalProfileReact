@@ -19,8 +19,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Removed OpenAPI to work with .NET 8.0
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -41,7 +41,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    // Removed OpenAPI to work with .NET 8.0
 }
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
@@ -61,11 +61,42 @@ app.MapFallbackToController("Index", "Fallback");
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-await db.Database.EnsureDeletedAsync();
-await db.Database.EnsureCreatedAsync();
+try
+{
+    // For test scenarios or when connection string suggests in-memory database, recreate database
+    var connectionString = db.Database.GetConnectionString();
+    if (app.Environment.IsEnvironment("Testing") || 
+        connectionString?.Contains(":memory:") == true || 
+        connectionString?.Contains("DataSource=:memory:") == true)
+    {
+        await db.Database.EnsureDeletedAsync();
+        await db.Database.EnsureCreatedAsync();
+    }
+    else
+    {
+        // For development, use EnsureCreated for simplicity until migration issues are resolved
+        if (app.Environment.IsDevelopment())
+        {
+            await db.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            // Use migrations in production
+            await db.Database.MigrateAsync();
+        }
+    }
 
-//db.Database.Migrate();
-await DbInitialiser.SeedData(db);
+    // Wait a moment to ensure database operations are complete
+    await Task.Delay(100);
+
+    await DbInitialiser.SeedData(db);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error initializing database: {ex.Message}");
+    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+    throw;
+}
 
 app.Run();
 

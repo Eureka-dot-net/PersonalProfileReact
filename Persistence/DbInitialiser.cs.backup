@@ -408,6 +408,124 @@ namespace Persistence
 
                 context.PromptTemplates.Add(promptTemplate);
             }
+            {
+                var promptTemplate = new PromptTemplate
+                {
+                    Name = "Job Match Evaluation",
+                    Description = "Evaluates candidate match and generates a tailored CV for a software developer role.",
+                    Template = """
+                        You are an expert AI assistant specializing in software developer recruitment. Your task is to analyze a candidate's profile against a job description and generate two outputs:
+
+                        1. A match evaluation, including a percentage and explanation.
+                            - Keep your explanation under 250 words.
+                            - Use \n for line breaks between paragraphs or key points.
+                            - Avoid markdown formatting, bullet points, or code blocks.
+                            - Structure your explanation with clear paragraphs separated by \n\n.
+                            - Highlight key points concisely in separate sentences.
+                            - Focus on direct skill and experience matches.
+                        - Clearly differentiate between explicitly listed skills/experience and transferable or similar experience.
+                        - When a skill or technology requested in the job description is *not* explicitly mentioned in the candidate’s profile, state that it is not explicitly listed, *then* mention any directly relevant *transferable* or *similar* experience the candidate *does* possess. Clearly label such experience as "transferable" or "similar." For example: "While `AngularJS` is not explicitly listed, the candidate's experience with `React` and `Node.js` demonstrates transferable front-end development skills."
+                        - Do not infer or fabricate skills, tools, or technologies that are not explicitly mentioned in the candidate’s profile. Do not assume experience based on similar technologies.
+
+                        2. A complete, tailored CV in structured JSON format. The CV must be written specifically for the job description provided, prioritizing the most relevant and aligned parts of the candidate’s background. Do not include unrelated or generic content. Tailor the structure, highlights, and wording to the job.
+
+                        Candidate Profile:
+
+                        Experience:
+                        {{experienceSummary}}
+
+                        Skills:
+                        {{skillsSummary}}
+
+                        Additionally, the candidate is actively working on several personal projects and taking courses to fill any skill gaps.
+
+                        Projects:
+                        {{projectSummary}}
+
+                        Important Note for CV Generation:
+                        The candidate's personal contact information should be represented by the following placeholders for privacy. Use these exact strings in the generated CV:
+                        - Candidate Name: CANDIDATE_NAME
+                        - Candidate Email: CANDIDATE_EMAIL
+                        - Candidate Phone: CANDIDATE_PHONE
+                        - Candidate LinkedIn URL: CANDIDATE_LINKEDIN_URL
+                        - Candidate Portfolio URL: CANDIDATE_PORTFOLIO_URL
+
+                        Job Description:
+                        ---
+                        {{jobDescription}}
+                        ---
+
+                        Structure to return (JSON):
+                        {
+                          "jobInformation": {
+                            "jobTitle": "Job title extracted from the description",
+                            "company": "Company name extracted from the description",
+                            "salary": "Salary range if mentioned, or null",
+                            "location": "Location if mentioned, or null",
+                            "requirements": "Key requirements extracted as a summary"
+                          },
+                          "matchEvaluation": {
+                            "matchPercentage": 0–100,
+                            "explanation": "A brief summary of how well the candidate fits the role."
+                          },
+                          "tailoredCv": {
+                            "name": "CANDIDATE_NAME",
+                            "email": "CANDIDATE_EMAIL",
+                            "phone": "CANDIDATE_PHONE",
+                            "personalWebsite": "CANDIDATE_PORTFOLIO_URL",
+                            "github": "CANDIDATE_GITHUB_URL",
+                            "summary": "Tailored personal summary based on job description. Keep under 250 words. Keep professional, compelling, and written in natural, recruiter-friendly language. It should clearly highlight the candidate's most relevant technical strengths, career achievements, and unique value for the target role. Make the opening sentence attention-grabbing, showing the candidate’s seniority or domain expertise. Integrate transferable skills naturally if they strengthen the match (clearly labeled as transferable). Avoid generic clichés—focus on specific results, tech stacks, and measurable impact where possible. Ensure the tone feels confident, warm, and human-written, not AI-generated.",
+                            "experience": [
+                              {
+                                "title": "Job Title",
+                                "company": "Company Name",
+                                "location": "City / Remote",
+                                "startDate": "yyyy-mm-dd", (ALWAYS use two digits for month and day, e.g., 2023-01-05 and ALWAYS return a valid date)
+                                "endDate": "yyyy-mm-dd or today's date if current", (ALWAYS use two digits for month and day, e.g., 2023-01-05 and ALWAYS return a valid date)
+                                "highlights": [
+                                  "Achievement 1",
+                                  "Achievement 2"
+                                ]
+                              }
+                            ],
+                            "projects": [
+                              {
+                                "name": "Project Name",
+                                "description": "Brief project description.",
+                                "url": "https://project-url.com",
+                                "gitHubRepo": "https://github.com/user/project",
+                                "isInProgress": true,
+                                "images": []
+                              }
+                            ],
+                            "skills": [
+                              {
+                                "category": "Programming Languages",
+                                "skills": ["C#", "Python", "JavaScript", (.."etc")]
+                              },
+                              {
+                                "category": "Frameworks and Libraries",
+                                "skills": [".NET", "React", "Entity Framework", (.."etc")]
+                              },
+                              {
+                                "category": "Soft Skills",
+                                "skills": ["Communication", "Problem Solving",  (.."etc")]
+                              },
+                              {
+                                "category": "(any other categories explicitly present in the candidate's profile but not yet listed here)",
+                                "skills": "(Include only skills explicitly listed in the profile. When including transferable skills, clearly label them as '(transferable)'. Reorder skills so the most relevant to the job appear first in each category.)"
+                              }
+                            ]
+                          }
+                        }
+
+                        Only include skills or experience the candidate has explicitly listed. If a skill or technology is not in the candidate profile, do not include it in the tailored CV. You may refer to transferable or related experience, but clearly indicate it is not a direct match. The tailored CV must feel human-written, grounded in the candidate’s background, and directly relevant to the job description.
+                        """,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                context.PromptTemplates.Add(promptTemplate);
+            }
 
             // Add sample JobMatch data for testing
             if (!context.JobMatches.Any())
